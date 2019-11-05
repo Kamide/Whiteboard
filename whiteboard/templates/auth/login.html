@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <article>
+        <header><h1>Log In</h1></header>
+        {% with method="post" %}
+            {% include "forms.html" %}
+        {% endwith %}
+        <footer>
+            <p>
+                Don't have an account? <a href="{{ url_for('auth.register') }}">Click here to register.</a>
+            </p>
+        </footer>
+    </article>
+{% endblock %}

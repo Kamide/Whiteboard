@@ -1,0 +1,20 @@
+<form action="{{ action }}" method="{{ method }}">
+    {{ form.csrf_token }}
+    {% for field in form %}
+        {% if field.type != "CSRFTokenField" %}
+            <div>
+                {% if field.type != "SubmitField" %}
+                    {{ field.label }}
+                {% endif %}
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="messages">
+                        {% for error in field.errors %}
+                            <li class="error">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</form>
