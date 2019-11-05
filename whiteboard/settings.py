@@ -1,0 +1,1 @@
+SECRET_PIN_LEN = 4

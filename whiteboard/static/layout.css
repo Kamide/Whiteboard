@@ -1,0 +1,160 @@
+:root {
+    --thin: 0.0625rem;
+    --medium: 0.125rem;
+    --thick: 0.25rem;
+    --margin-minor: 1rem;
+    --margin-major: 2rem;
+
+    --text-color: hsl(204, 80%, 20%);
+    --text-color-saturated: hsl(216, 100%, 40%);
+    --text-color-subdued: hsl(210, 20%, 40%);
+    --main-bg-color: hsl(204, 5%, 95%);
+    --header-bg-color: hsl(138, 25%, 90%);
+    --header-outline-color: hsl(168, 25%, 60%);
+
+    --anchor-color: hsl(282, 50%, 50%);
+    --highlight-color: hsl(192, 50%, 50%);
+    --success-color: hsl(108, 50%, 30%);
+    --error-color: hsl(342, 100%, 42%);
+}
+
+html, body, h1, p, ul, header.masthead *, .messages.masthead ul {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+body {
+    background-color: var(--main-bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.5;
+}
+
+h1, p, ul {
+    margin: var(--margin-minor) 0;
+}
+
+ul {
+    margin-left: var(--margin-major);
+}
+
+a {
+    color: var(--anchor-color);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--highlight-color);
+    text-decoration: underline;
+}
+
+header.masthead, article {
+    margin-bottom: var(--margin-major);
+}
+
+header.masthead {
+    background-color: var(--header-bg-color);
+    border-bottom:var(--thin) solid var(--header-outline-color);
+    border-top:var(--thin) solid transparent;
+}
+
+nav.masthead h1 {
+    font-size: inherit;
+}
+
+nav.masthead a {
+    display: block;
+    position: relative;
+    padding: var(--margin-minor);
+}
+
+nav.masthead a.active-page::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: calc(var(--margin-minor) / 2);
+    height: 50%;
+    bottom: 25%;
+    left: 0;
+    background: linear-gradient(to right, var(--text-color) 40%, var(--highlight-color) 40%);
+    outline: var(--thin) solid var(--header-outline-color);
+}
+
+.messages .success {
+    color: var(--success-color);
+}
+
+.messages .error {
+    color: var(--error-color);
+}
+
+.messages.masthead h1 {
+    display: none;
+}
+
+.messages.masthead ul {
+    list-style-position: inside;
+    list-style-image: url('/static/info.svg');
+}
+
+.messages.masthead li {
+    margin: var(--margin-minor);
+}
+
+.messages.masthead .success {
+    list-style-image: url('/static/success.svg');
+}
+
+.messages.masthead .error {
+    list-style-image: url('/static/error.svg');
+    font-weight: bold;
+}
+
+main {
+    padding: 0 var(--margin-minor);
+    box-sizing: border-box;
+}
+
+header p {
+    color: var(--text-color-saturated);
+}
+
+footer {
+    color: var(--text-color-subdued);
+}
+
+@media only screen and (min-width: 800px) {
+    nav.masthead, .messages.masthead ul, main {
+        max-width: 800px;
+        margin: auto;
+    }
+
+    nav.masthead, nav.masthead ul {
+        display: flex;
+    }
+
+    nav.masthead li {
+        display: block;
+    }
+
+    nav.masthead a.active-page::after {
+        width: 50%;
+        height: var(--thick);
+        bottom: 0;
+        left: 25%;
+        background: linear-gradient(to right, var(--anchor-color) 25%, var(--main-bg-color) 25%);
+    }
+}
+
+@media only screen and (min-width: 800px) and (min-height: 300px) {
+    header.masthead {
+        position: sticky;
+        top: calc(-1rem - 2 * var(--margin-minor) - var(--thick));
+    }
+
+    header.masthead:hover {
+        top: 0;
+    }
+}

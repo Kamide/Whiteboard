@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <article>
+        <header>
+            <h1>
+                {% if is_teacher %}
+                    Teacher
+                {% else %}
+                    Student
+                {% endif %}
+                Account Registration Form
+            </h1>
+            <p>
+                {% if is_teacher %}
+                    Please ask faculty or staff members for a temporary {{ config.SECRET_PIN_LEN }}-character secret PIN.
+                {% else %}
+                    Completed forms will be verified by faculty or staff members.
+                {% endif %}
+            </p>
+        </header>
+        {% with method="post" %}
+            {% include "forms.html" %}
+        {% endwith %}
+        <footer>
+            <p>
+                Already have an account? <a href="{{ url_for('auth.login') }}">Click here to log in.</a>
+            </p>
+        </footer>
+    </article>
+{% endblock %}
