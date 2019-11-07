@@ -8,11 +8,14 @@ form {
 }
 
 label, input {
-    display: block;
     margin: calc(var(--margin-minor) / 2) 0;
     color: inherit;
     font-size: inherit;
     line-height: inherit;
+}
+
+input:not([type=checkbox]) {
+    display: block;
 }
 
 input {
@@ -38,8 +41,11 @@ input[type=text]:focus, input[type=password]:focus {
     background-color: var(--input-bg-color-focus);
 }
 
-input[type=submit] {
+input[type=checkbox], input[type=submit] {
     margin-top: var(--margin-minor);
+}
+
+input[type=submit] {
     border: var(--thin) solid var(--text-color-subdued);
     border-bottom-width: var(--medium);
     border-radius: var(--thick);

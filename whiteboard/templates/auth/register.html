@@ -3,21 +3,8 @@
 {% block content %}
     <article>
         <header>
-            <h1>
-                {% if is_teacher %}
-                    Teacher
-                {% else %}
-                    Student
-                {% endif %}
-                Account Registration Form
-            </h1>
-            <p>
-                {% if is_teacher %}
-                    Please ask faculty or staff members for a temporary {{ config.SECRET_PIN_LEN }}-character secret PIN.
-                {% else %}
-                    Completed forms will be verified by faculty or staff members.
-                {% endif %}
-            </p>
+            <h1>Register</h1>
+            <p>Completed applications will be verified by faculty or staff members.</p>
         </header>
         {% with method="post" %}
             {% include "forms.html" %}

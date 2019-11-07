@@ -16,9 +16,8 @@
                 <h1><a {% if request.endpoint == "root.index" %}class="active-page"{% endif %} href="{{ url_for('root.index') }}" title="Home Page">Whiteboard</a></h1>
                 <ul>
                     {% with nav_bar = [
-                        ('auth.register', 'Register (Student)', not current_user.is_authenticated),
-                        ('auth.register_teacher', 'Register (Teacher)', not current_user.is_authenticated),
-                        ('auth.login', 'Log In', not current_user.is_authenticated),
+                        ('auth.register', 'Register', current_user.is_anonymous),
+                        ('auth.login', 'Log In', current_user.is_anonymous),
                         ('auth.logout', 'Log Out', current_user.is_authenticated),
                     ] %}
                         {% include "lists.html" %}

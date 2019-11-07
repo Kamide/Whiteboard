@@ -3,10 +3,15 @@
     {% for field in form %}
         {% if field.type != "CSRFTokenField" %}
             <div>
-                {% if field.type != "SubmitField" %}
+                {% if field.type == "BooleanField" %}
+                    {{ field }}
                     {{ field.label }}
+                {% else %}
+                    {% if field.type != "SubmitField" %}
+                        {{ field.label }}
+                    {% endif %}
+                    {{ field }}
                 {% endif %}
-                {{ field }}
                 {% if field.errors %}
                     <ul class="messages">
                         {% for error in field.errors %}
