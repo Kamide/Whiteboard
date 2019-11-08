@@ -1,0 +1,11 @@
+.applicant table {
+    border-spacing: var(--thick);
+}
+
+.applicant tr:first-child {
+    font-weight: bold;
+}
+
+.applicant td:first-child {
+    text-align: right;
+}

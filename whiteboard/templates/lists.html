@@ -1,5 +1,0 @@
-{% for href, caption, to_be_printed in nav_bar %}
-    {% if to_be_printed %}
-        <li><a {% if href == request.endpoint %}class="active-page"{% endif %} href="{{ url_for(href) }}">{{ caption }}</a></li>
-    {% endif %}
-{% endfor %}

@@ -1,11 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <article>
-        <header>
-            <h1>Register</h1>
-            <p>Completed applications will be verified by faculty or staff members.</p>
-        </header>
+    <section>
+        <header><h2>Register</h2></header>
+        <p class="emphasized">Completed applications will be verified by faculty or staff members.</p>
         {% with method="post" %}
             {% include "forms.html" %}
         {% endwith %}
@@ -14,5 +12,5 @@
                 Already have an account? <a href="{{ url_for('auth.login') }}">Click here to log in.</a>
             </p>
         </footer>
-    </article>
+    </section>
 {% endblock %}

@@ -18,7 +18,7 @@
     --error-color: hsl(342, 100%, 42%);
 }
 
-html, body, h1, p, ul, header.masthead *, .messages.masthead ul {
+html, body, h2, p, ul, header.masthead *, .messages.masthead ul {
     margin: 0;
     padding: 0;
     border: 0;
@@ -31,7 +31,7 @@ body {
     line-height: 1.5;
 }
 
-h1, p, ul {
+h2, p, ul {
     margin: var(--margin-minor) 0;
 }
 
@@ -50,7 +50,7 @@ a:hover {
     text-decoration: underline;
 }
 
-header.masthead, article {
+header.masthead, main {
     margin-bottom: var(--margin-major);
 }
 
@@ -64,15 +64,17 @@ nav.masthead h1 {
     font-size: inherit;
 }
 
-nav.masthead a {
+nav.masthead li, nav.masthead a, nav.masthead a.active-page::after {
     display: block;
+}
+
+nav.masthead a {
     position: relative;
     padding: var(--margin-minor);
 }
 
 nav.masthead a.active-page::after {
     content: '';
-    display: block;
     position: absolute;
     width: calc(var(--margin-minor) / 2);
     height: 50%;
@@ -90,7 +92,7 @@ nav.masthead a.active-page::after {
     color: var(--error-color);
 }
 
-.messages.masthead h1 {
+.messages.masthead h2 {
     display: none;
 }
 
@@ -117,26 +119,23 @@ main {
     box-sizing: border-box;
 }
 
-header p {
-    color: var(--text-color-saturated);
-}
-
 footer {
     color: var(--text-color-subdued);
+}
+
+.emphasized {
+    color: var(--text-color-saturated);
 }
 
 @media only screen and (min-width: 800px) {
     nav.masthead, .messages.masthead ul, main {
         max-width: 800px;
-        margin: auto;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     nav.masthead, nav.masthead ul {
         display: flex;
-    }
-
-    nav.masthead li {
-        display: block;
     }
 
     nav.masthead a.active-page::after {
