@@ -16,6 +16,9 @@ def create_app():
         db.create_all()
         login_manager.init_app(app)
 
+        from whiteboard.views import csrf
+        csrf.init_app(app)
+
         from whiteboard.views.root import root as root_blueprint
         app.register_blueprint(root_blueprint)
 

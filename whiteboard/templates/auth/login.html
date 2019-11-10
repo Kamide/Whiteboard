@@ -1,11 +1,12 @@
-{% extends "layout.html" %}
+{% extends "forms.html" %}
+
+{% block title %}Log In - {{ super() }}{% endblock %}
 
 {% block content %}
     <section>
         <header><h2>Log In</h2></header>
-        {% with method="post" %}
-            {% include "forms.html" %}
-        {% endwith %}
+        {% from "macros.html" import print_form with context %}
+        {{ print_form(form=form, method="post") }}
         <footer>
             <p>
                 Don't have an account? <a href="{{ url_for('auth.register') }}">Click here to register.</a>

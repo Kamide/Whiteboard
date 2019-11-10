@@ -11,7 +11,7 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email(), Length(max=254)])
     password = PasswordField('Password', validators=[InputRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[InputRequired(), EqualTo('password')])
-    is_fs_member = BooleanField('Part of Faculty or Staff?')
+    is_teacher = BooleanField('Part of Faculty or Staff?')
     submit = SubmitField('Submit Application')
 
 

@@ -11,6 +11,8 @@
     --main-bg-color: hsl(204, 5%, 95%);
     --header-bg-color: hsl(138, 25%, 90%);
     --header-outline-color: hsl(168, 25%, 60%);
+    --card-bg-color: rgba(255, 255, 255, 0.5);
+    --card-shadow-color: rgba(0, 0, 0, 0.1);
 
     --anchor-color: hsl(282, 50%, 50%);
     --highlight-color: hsl(192, 50%, 50%);
@@ -35,7 +37,7 @@ h2, p, ul {
     margin: var(--margin-minor) 0;
 }
 
-ul {
+ul, .indented {
     margin-left: var(--margin-major);
 }
 
@@ -50,7 +52,7 @@ a:hover {
     text-decoration: underline;
 }
 
-header.masthead, main {
+header.masthead, main, .card, .isolated {
     margin-bottom: var(--margin-major);
 }
 
@@ -114,16 +116,22 @@ nav.masthead a.active-page::after {
     font-weight: bold;
 }
 
-main {
+main, .card {
     padding: 0 var(--margin-minor);
     box-sizing: border-box;
+}
+
+.card {
+    border: var(--thin) solid var(--card-shadow-color);
+    background-color: var(--card-bg-color);
+    box-shadow: 0 var(--medium) var(--thick) var(--card-shadow-color);
 }
 
 footer {
     color: var(--text-color-subdued);
 }
 
-.emphasized {
+em.emphasized {
     color: var(--text-color-saturated);
 }
 
