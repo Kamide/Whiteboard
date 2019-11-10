@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
+from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from whiteboard.forms import RegistrationForm, LoginForm
 from whiteboard.models import db, User, Teacher, Student
@@ -7,7 +8,17 @@ from whiteboard.models import db, User, Teacher, Student
 auth = Blueprint('auth', __name__, template_folder='../templates/auth')
 
 
+def anonymous_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_anonymous:
+            return f(*args, **kwargs)
+        return redirect(url_for('auth.logout'))
+    return decorated_function
+
+
 @auth.route('/register', methods=['GET', 'POST'])
+@anonymous_required
 def register():
     form = RegistrationForm()
 
@@ -21,26 +32,27 @@ def register():
             db.session.add(new_user)
             db.session.flush()
 
-            if form.is_fs_member.data:
-                new_teacher = Teacher(user=new_user.id)
+            if form.is_teacher.data:
+                new_teacher = Teacher(user_id=new_user.id)
                 db.session.add(new_teacher)
             else:
-                new_student = Student(user=new_user.id)
+                new_student = Student(user_id=new_user.id)
                 db.session.add(new_student)
 
             db.session.commit()
             flash(f"{form.username.data}'s application has been sent for verification.", 'success')
             return redirect(url_for('root.index'))
 
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html', form=form)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
+@anonymous_required
 def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(username=form.username.data.upper()).first()
 
         if user and check_password_hash(user.password, form.password.data):
             if user.is_active:
@@ -51,7 +63,7 @@ def login():
         else:
             flash('You have entered an invalid username or password.', 'error')
 
-    return render_template('login.html', title='Log In', form=form)
+    return render_template('login.html', form=form)
 
 
 @auth.route('/logout')

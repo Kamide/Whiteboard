@@ -1,4 +1,26 @@
+#nav ul {
+    list-style: circle;
+}
+
+#nav li {
+    display: contents;
+}
+
+#nav a {
+    display: list-item;
+}
+
+#nav a.active-page {
+    list-style: disc;
+}
+
+#jumper {
+    display: list-item;
+    list-style-image: url('/static/jumper.svg');
+}
+
 .applicant table {
+    margin: calc(-1 * var(--thick));
     border-spacing: var(--thick);
 }
 

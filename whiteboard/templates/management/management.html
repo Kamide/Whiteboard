@@ -1,0 +1,29 @@
+{% extends "forms.html" %}
+
+{% block title %}Management - {{ super() }}{% endblock %}
+
+{% block style %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='management.css') }}">
+{% endblock %}
+
+{% block content %}
+    <section id="index" class="isolated">
+        <header><h2>Management</h2></header>
+        <nav id="nav">
+            <ul>
+                {{ nav_link('management.applicants', 'Applicants') }}
+            </ul>
+        </nav>
+    </section>
+
+    {% block subcontent %}{% endblock %}
+
+    {% if request.endpoint != "management.index" %}
+        <footer>
+            <p class="indented">
+                <a id="jumper" href="#index">Jump to Index</a>
+            </p>
+        </footer>
+    {% endif %}
+{% endblock %}

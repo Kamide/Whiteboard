@@ -1,0 +1,51 @@
+{% macro get_identity(user=current_user) %}
+    {% if user.is_authenticated %}
+        {% if user.is_teacher %}
+            Teacher
+        {% else %}
+            Student
+        {% endif %}
+    {% else %}
+        Anonymous
+    {% endif %}
+{% endmacro %}
+
+{% macro nav_link(href, caption, print_condition=True) %}
+    {% if print_condition %}
+        <li>
+            <a {% if href == request.endpoint %}class="active-page"{% endif %} href="{{ url_for(href) }}">{{ caption }}</a>
+        </li>
+    {% endif %}
+{% endmacro %}
+
+{% macro get_csrf_token() %}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{% endmacro %}
+
+{% macro print_form(form, method, action="", class="", grouped=True) %}
+    <form class="{{ class }}" action="{{ action }}" method="{{ method }}">
+        {{ form.csrf_token }}
+        {% for field in form %}
+            {% if field.type != "CSRFTokenField" %}
+                {% if grouped %}<div>{% endif %}
+                    {% if field.type == "BooleanField" %}
+                        {{ field }}
+                        {{ field.label }}
+                    {% else %}
+                        {% if field.type != "SubmitField" %}
+                            {{ field.label }}
+                        {% endif %}
+                        {{ field }}
+                    {% endif %}
+                    {% if field.errors %}
+                        <ul class="messages">
+                            {% for error in field.errors %}
+                                <li class="error">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% if grouped %}</div>{% endif %}
+            {% endif %}
+        {% endfor %}
+    </form>
+{% endmacro %}

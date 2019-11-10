@@ -47,10 +47,10 @@ while True:
 
 conn = sqlite3.connect('whiteboard/development.db')
 c = conn.cursor()
-c.execute('INSERT INTO Users (username, password, full_name, display_name, email, join_date) VALUES (?,?,?,?,?,?)', (username, generate_password_hash(password), full_name, display_name, email, datetime.utcnow()))
+c.execute('INSERT INTO Users (username, password, full_name, display_name, email, join_date) VALUES (?,?,?,?,?,?)', (username.upper(), generate_password_hash(password), full_name, display_name, email.lower(), datetime.utcnow()))
 user_id = c.lastrowid
 conn.commit()
-c.execute(f'INSERT INTO Teachers (user) VALUES ({user_id})')
+c.execute(f'INSERT INTO Teachers (user_id) VALUES ({user_id})')
 conn.commit()
 c.close()
 conn.close()

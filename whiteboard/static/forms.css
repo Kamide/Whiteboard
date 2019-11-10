@@ -14,12 +14,12 @@ label, input {
     line-height: inherit;
 }
 
-input:not([type=checkbox]) {
+form:not(.inlined) input:not([type=checkbox]) {
     display: block;
 }
 
 input {
-    padding: var(--thick) calc(var(--thick) * 2);
+    padding: var(--thick) calc(2 * var(--thick));
     border: 0;
     outline: 0;
 }
@@ -41,8 +41,12 @@ input[type=text]:focus, input[type=password]:focus {
     background-color: var(--input-bg-color-focus);
 }
 
-input[type=checkbox], input[type=submit] {
+form:not(.inlined) input[type=checkbox], form:not(.inlined) input[type=submit] {
     margin-top: var(--margin-minor);
+}
+
+form.inlined input[type=submit] {
+    vertical-align: middle;
 }
 
 input[type=submit] {
@@ -60,4 +64,9 @@ input[type=submit]:active {
     border-top-width: var(--medium);
     border-bottom-width: var(--thin);
     border-color: var(--highlight-color);
+}
+
+input[type=submit].emphasized {
+    color: inherit;
+    font-weight: bold;
 }

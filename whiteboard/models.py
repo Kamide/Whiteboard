@@ -23,19 +23,22 @@ class Department(db.Model):
 class Major(db.Model):
     __tablename__ = 'Majors'
     id = db.Column(db.Integer, primary_key=True)
+    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
-    department = db.Column(db.Integer, db.ForeignKey('Departments.id'), nullable=False)
 
 
 class User(db.Model, UserMixin):
     __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(CAMPUS_CARD.max_len, collation='NOCASE'), nullable=False, unique=True)
+    username = db.Column(db.String(CAMPUS_CARD.max_len), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
     full_name = db.Column(db.String(255), nullable=False)
     display_name = db.Column(db.String(255))
-    email = db.Column(db.String(254, collation='NOCASE'), nullable=False, unique=True)
+    email = db.Column(db.String(254), nullable=False, unique=True)
     join_date = db.Column(db.DateTime())
+
+    teacher = db.relationship('Teacher', backref='user', cascade='all, delete')
+    student = db.relationship('Student', backref='user', cascade='all, delete')
 
     @property
     def is_active(self):
@@ -43,18 +46,18 @@ class User(db.Model, UserMixin):
 
     @property
     def is_teacher(self):
-        return Teacher.query.filter_by(user=self.id).first()
+        return Teacher.query.filter_by(user_id=self.id).first()
 
 
 class Teacher(db.Model):
     __tablename__ = 'Teachers'
-    user = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
-    department = db.Column(db.Integer, db.ForeignKey('Departments.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
+    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id'))
     office = db.Column(db.String(255))
     office_hours = db.Column(db.String(255))
 
 
 class Student(db.Model):
     __tablename__ = 'Students'
-    user = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
-    major = db.Column(db.Integer, db.ForeignKey('Majors.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
+    major_id = db.Column(db.Integer, db.ForeignKey('Majors.id'))

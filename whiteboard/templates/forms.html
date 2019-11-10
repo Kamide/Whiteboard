@@ -1,25 +1,5 @@
-<form action="{{ action }}" method="{{ method }}">
-    {{ form.csrf_token }}
-    {% for field in form %}
-        {% if field.type != "CSRFTokenField" %}
-            <div>
-                {% if field.type == "BooleanField" %}
-                    {{ field }}
-                    {{ field.label }}
-                {% else %}
-                    {% if field.type != "SubmitField" %}
-                        {{ field.label }}
-                    {% endif %}
-                    {{ field }}
-                {% endif %}
-                {% if field.errors %}
-                    <ul class="messages">
-                        {% for error in field.errors %}
-                            <li class="error">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-        {% endif %}
-    {% endfor %}
-</form>
+{% extends "layout.html" %}
+
+{% from "macros.html" import get_csrf_token, print_form with context %}
+
+{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">{% endblock %}

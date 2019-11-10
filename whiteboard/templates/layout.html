@@ -1,17 +1,12 @@
-{% macro nav_link(href, caption, print_condition=True) %}
-    {% if print_condition %}
-        <li><a {% if href == request.endpoint %}class="active-page"{% endif %} href="{{ url_for(href) }}">{{ caption }}</a></li>
-    {% endif %}
-{% endmacro %}
+{% from "macros.html" import nav_link with context %}
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% if title %}{{ title }} - {% endif %}Whiteboard</title>
+        <title>{% block title %}Whiteboard{% endblock %}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='layout.css') }}">
-        {% if form %}<link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">{% endif %}
         {% block style %}{% endblock %}
         <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
         <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
@@ -19,11 +14,11 @@
     <body>
         <header class="masthead">
             <nav class="masthead">
-                <h1><a {% if request.endpoint == "root.index" %}class="active-page"{% endif %} href="{{ url_for('root.index') }}" title="Home Page">Whiteboard</a></h1>
+                <header><h1><a {% if request.endpoint == "root.index" %}class="active-page"{% endif %} href="{{ url_for('root.index') }}" title="Home Page">Whiteboard</a></h1></header>
                 <ul>
                     {{ nav_link('auth.register', 'Register', current_user.is_anonymous) }}
                     {{ nav_link('auth.login', 'Log In', current_user.is_anonymous) }}
-                    {{ nav_link('management.applications', 'Applications', current_user.is_authenticated) }}
+                    {{ nav_link('management.index', 'Management', current_user.is_teacher) }}
                     {{ nav_link('auth.logout', 'Log Out', current_user.is_authenticated) }}
                 </ul>
             </nav>
