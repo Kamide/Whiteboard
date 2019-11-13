@@ -16,9 +16,10 @@
             <nav class="masthead">
                 <header><h1><a {% if request.endpoint == "root.index" %}class="active-page"{% endif %} href="{{ url_for('root.index') }}" title="Home Page">Whiteboard</a></h1></header>
                 <ul>
+                    {{ nav_link('root.users', 'Users') }}
                     {{ nav_link('auth.register', 'Register', current_user.is_anonymous) }}
                     {{ nav_link('auth.login', 'Log In', current_user.is_anonymous) }}
-                    {{ nav_link('management.index', 'Management', current_user.is_teacher) }}
+                    {{ nav_link('admin.applicants', 'Applicants', current_user.is_teacher) }}
                     {{ nav_link('auth.logout', 'Log Out', current_user.is_authenticated) }}
                 </ul>
             </nav>

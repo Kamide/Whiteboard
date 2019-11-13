@@ -1,0 +1,20 @@
+{% extends "applicants.html" %}
+
+{% block title %}Admissions - {{ super() }}{% endblock %}
+
+{% block content %}
+    <section>
+        <header><h2>Admissions</h2></header>
+        <section class="applicant card">
+            {{ application(applicant) }}
+            <p class="emphasized"><em>Are you sure you want to <strong>{{ request.form.decision }}</strong> this applicant?</em></p>
+            <form class="inlined" method="post">
+                <div>
+                    {{ get_csrf_token() }}
+                    <input class="emphasized" type="submit" name="confirmation" value="{{ request.form.decision }}">
+                    <input type="submit" name="confirmation" value="Cancel">
+                </div>
+            </form>
+        </section>
+    </section>
+{% endblock %}

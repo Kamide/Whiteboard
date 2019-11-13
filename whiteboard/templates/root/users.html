@@ -1,0 +1,30 @@
+{% extends "forms.html" %}
+
+{% from "macros.html" import get_name with context %}
+
+{% macro print_user(user) %}
+    <li>
+        <h3>{{ get_name(user) }} ({{ user.username }})</h3>
+    </li>
+{% endmacro %}
+
+{% block title %}Users - {{ super() }}{% endblock %}
+
+{% block content %}
+    <section>
+        <header><h2>Teachers</h2></header>
+        <ul>
+            {% for teacher in teachers %}
+                {{ print_user(teacher) }}
+            {% endfor %}
+        </ul>
+    </section>
+    <section>
+        <header><h2>Students</h2></header>
+        <ul>
+            {% for student in students %}
+                {{ print_user(student) }}
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

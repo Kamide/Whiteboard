@@ -4,34 +4,29 @@ from flask_login import login_required, current_user
 from whiteboard.models import db, User
 from whiteboard.settings import CAMPUS_CARD
 
-management = Blueprint('management', __name__, template_folder='../templates/management', url_prefix='/management')
+admin = Blueprint('admin', __name__, template_folder='../templates/admin')
 
 
-@management.before_request
+@admin.before_request
 @login_required
-def restrict_management_to_teachers():
+def admin_required():
     if not current_user.is_teacher:
         abort(403)
 
 
-@management.route('/')
-def index():
-    return render_template('management.html')
-
-
-@management.route('/applicants', methods=['GET', 'POST'])
+@admin.route('/applicants', methods=['GET', 'POST'])
 def applicants():
     applicants = User.query.filter_by(join_date=None)
     return render_template('applicants.html', applicants=applicants)
 
 
-@management.route('/applicants/<applicant_id>', methods=['POST'])
+@admin.route('/applicants/<applicant_id>', methods=['POST'])
 def admissions(applicant_id):
     applicant = User.query.filter_by(id=applicant_id).first()
 
     if not applicant or applicant.is_active:
         flash('This applicant does not exist.', 'error')
-        return redirect(url_for('management.applicants'))
+        return redirect(url_for('admin.applicants'))
 
     if 'decision' in request.form:
         pass
@@ -45,9 +40,9 @@ def admissions(applicant_id):
             db.session.commit()
             flash(f"{applicant.full_name}'s application with {CAMPUS_CARD.formal_name} {applicant.username} has been successfully deleted.", 'success')
 
-        return redirect(url_for('management.applicants'))
+        return redirect(url_for('admin.applicants'))
     else:
         flash('An unknown error has occurred', 'error')
-        return redirect(url_for('management.applicants'))
+        return redirect(url_for('admin.applicants'))
 
     return render_template('admissions.html', applicant=applicant)

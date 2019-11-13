@@ -25,7 +25,7 @@ def create_app():
         from whiteboard.views.auth import auth as auth_blueprint
         app.register_blueprint(auth_blueprint)
 
-        from whiteboard.views.management import management as management_blueprint
-        app.register_blueprint(management_blueprint)
+        from whiteboard.views.admin import admin as admin_blueprint
+        app.register_blueprint(admin_blueprint)
 
         return app

@@ -46,7 +46,7 @@ class User(db.Model, UserMixin):
 
     @property
     def is_teacher(self):
-        return Teacher.query.filter_by(user_id=self.id).first()
+        return self.teacher is not None
 
 
 class Teacher(db.Model):
