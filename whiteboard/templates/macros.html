@@ -10,6 +10,14 @@
     {% endif %}
 {% endmacro %}
 
+{% macro get_name(user=current_user) %}
+    {% if user.display_name %}
+        {{ user.display_name }}
+    {% else %}
+        {{ user.username }}
+    {% endif %}
+{% endmacro %}
+
 {% macro nav_link(href, caption, print_condition=True) %}
     {% if print_condition %}
         <li>

@@ -33,7 +33,7 @@ body {
     line-height: 1.5;
 }
 
-h2, p, ul {
+h2, p, ul, .card {
     margin: var(--margin-minor) 0;
 }
 
@@ -52,7 +52,7 @@ a:hover {
     text-decoration: underline;
 }
 
-header.masthead, main, .card, .isolated {
+header.masthead, main, main > section {
     margin-bottom: var(--margin-major);
 }
 
@@ -131,7 +131,7 @@ footer {
     color: var(--text-color-subdued);
 }
 
-em.emphasized {
+.emphasized {
     color: var(--text-color-saturated);
 }
 
