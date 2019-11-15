@@ -7,15 +7,24 @@ form {
     margin: var(--margin-minor) 0;
 }
 
+form:not(.inlined) input:not([type=checkbox]) {
+    display: block;
+}
+
+form:not(.inlined) input[type=checkbox], form:not(.inlined) input[type=submit] {
+    margin-top: var(--margin-minor);
+}
+
+form.inlined input[type=submit] {
+    vertical-align: middle;
+}
+
 label, input {
     margin: calc(var(--margin-minor) / 2) 0;
     color: inherit;
     font-size: inherit;
     line-height: inherit;
-}
-
-form:not(.inlined) input:not([type=checkbox]) {
-    display: block;
+    box-sizing: border-box;
 }
 
 input {
@@ -39,14 +48,6 @@ input[type=text]:hover, input[type=password]:hover {
 input[type=text]:focus, input[type=password]:focus {
     border-color: var(--text-color-saturated);
     background-color: var(--input-bg-color-focus);
-}
-
-form:not(.inlined) input[type=checkbox], form:not(.inlined) input[type=submit] {
-    margin-top: var(--margin-minor);
-}
-
-form.inlined input[type=submit] {
-    vertical-align: middle;
 }
 
 input[type=submit] {

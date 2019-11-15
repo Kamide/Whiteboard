@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% macro admin_link(href, caption) %}
+    {% if current_user.is_teacher %}
+        <p>
+            <a class="button float-top-right" href="{{ href }}">{{ caption }}</a>
+        </p>
+    {% endif %}
+{% endmacro %}
+
+{% block title %}Academics - {{ super() }}{% endblock %}
+
+{% block content %}
+    <nav>
+        <header><h2>Directory</h2></header>
+        <ul>
+            <li><a href="#departments">Departments</a></li>
+            <li><a href="#majors">Majors</a></li>
+        </ul>
+    </nav>
+    <section id="departments">
+        <header><h2>Departments</h2></header>
+        {{ admin_link(url_for('admin.new_department'), 'Add New Department') }}
+        {% if departments %}
+            {% for department in departments %}
+                <section class="card">
+                    <h3>{{ department.name }}</h3>
+                    <p>Chair: <strong class="emphasized">{{ department.chair }}</strong></p>
+                    <p>Office: <strong class="emphasized">{{ department.office }}</strong></p>
+                    {{ admin_link(url_for('admin.edit_department', department_id=department.id), 'Edit') }}
+                </section>
+            {% endfor %}
+        {% else %}
+            <p class="emphasized"><em>No departments listed.</em></p>
+        {% endif %}
+    </section>
+    <section id="majors">
+        <header><h2>Majors</h2></header>
+        {{ admin_link('', 'Add New Major') }}
+        {% if majors %}
+            {% for major in majors %}
+                <section class="card">
+                    <h3>{{ major.name }}</h3>
+                    {% if major.department %}
+                        <p>Department: <strong class="emphasized">{{ major.department.name }}</strong></p>
+                    {% endif %}
+                    {{ admin_link('', 'Edit') }}
+                </section>
+            {% endfor %}
+        {% else %}
+            <p class="emphasized"><em>No majors listed.</em></p>
+        {% endif %}
+    </section>
+{% endblock %}

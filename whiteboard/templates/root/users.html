@@ -3,9 +3,7 @@
 {% from "macros.html" import get_name with context %}
 
 {% macro print_user(user) %}
-    <li>
-        <h3>{{ get_name(user) }} ({{ user.username }})</h3>
-    </li>
+    <li>{{ get_name(user) }} ({{ user.username }})</li>
 {% endmacro %}
 
 {% block title %}Users - {{ super() }}{% endblock %}

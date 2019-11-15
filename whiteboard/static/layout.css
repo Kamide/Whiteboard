@@ -33,7 +33,7 @@ body {
     line-height: 1.5;
 }
 
-h2, p, ul, .card {
+h2, h3, p, ul, .card {
     margin: var(--margin-minor) 0;
 }
 
@@ -52,7 +52,7 @@ a:hover {
     text-decoration: underline;
 }
 
-header.masthead, main, main > section {
+header.masthead, main {
     margin-bottom: var(--margin-major);
 }
 
@@ -121,10 +121,19 @@ main, .card {
     box-sizing: border-box;
 }
 
-.card {
+main section {
+    position: relative;
+}
+
+.card, .button {
     border: var(--thin) solid var(--card-shadow-color);
+    border-radius: var(--thick);
     background-color: var(--card-bg-color);
     box-shadow: 0 var(--medium) var(--thick) var(--card-shadow-color);
+}
+
+.button {
+    padding: calc(var(--margin-minor) / 4) calc(var(--margin-minor) / 2);
 }
 
 footer {
@@ -133,6 +142,12 @@ footer {
 
 .emphasized {
     color: var(--text-color-saturated);
+}
+
+.float-top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 @media only screen and (min-width: 800px) {

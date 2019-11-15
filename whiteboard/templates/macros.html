@@ -14,7 +14,7 @@
     {% if user.display_name %}
         {{ user.display_name }}
     {% else %}
-        {{ user.username }}
+        {{ user.full_name }}
     {% endif %}
 {% endmacro %}
 
@@ -30,12 +30,12 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 {% endmacro %}
 
-{% macro print_form(form, method, action="", class="", grouped=True) %}
-    <form class="{{ class }}" action="{{ action }}" method="{{ method }}">
+{% macro print_form(form, method, action="") %}
+    <form action="{{ action }}" method="{{ method }}">
         {{ form.csrf_token }}
         {% for field in form %}
             {% if field.type != "CSRFTokenField" %}
-                {% if grouped %}<div>{% endif %}
+                <div>
                     {% if field.type == "BooleanField" %}
                         {{ field }}
                         {{ field.label }}
@@ -52,7 +52,7 @@
                             {% endfor %}
                         </ul>
                     {% endif %}
-                {% if grouped %}</div>{% endif %}
+                </div>
             {% endif %}
         {% endfor %}
     </form>

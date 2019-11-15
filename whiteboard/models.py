@@ -15,16 +15,18 @@ def load_user(user_id):
 class Department(db.Model):
     __tablename__ = 'Departments'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255), nullable=False, unique=True)
     chair = db.Column(db.String(255), nullable=False)
     office = db.Column(db.String(255), nullable=False)
+
+    majors = db.relationship('Major', backref='department')
 
 
 class Major(db.Model):
     __tablename__ = 'Majors'
     id = db.Column(db.Integer, primary_key=True)
-    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id'), nullable=False)
-    name = db.Column(db.String(255), nullable=False)
+    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id', ondelete='SET NULL'))
+    name = db.Column(db.String(255), nullable=False, unique=True)
 
 
 class User(db.Model, UserMixin):
@@ -51,13 +53,13 @@ class User(db.Model, UserMixin):
 
 class Teacher(db.Model):
     __tablename__ = 'Teachers'
-    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
-    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id', ondelete='CASCADE'), primary_key=True)
+    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id', ondelete='SET NULL'))
     office = db.Column(db.String(255))
     office_hours = db.Column(db.String(255))
 
 
 class Student(db.Model):
     __tablename__ = 'Students'
-    user_id = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
-    major_id = db.Column(db.Integer, db.ForeignKey('Majors.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.id', ondelete='CASCADE'), primary_key=True)
+    major_id = db.Column(db.Integer, db.ForeignKey('Majors.id', ondelete='SET NULL'))
