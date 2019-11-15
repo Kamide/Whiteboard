@@ -19,3 +19,17 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
     submit = SubmitField('Log In')
+
+
+class DepartmentForm(FlaskForm):
+    name = StringField('Name', validators=[InputRequired()])
+    chair = StringField('Chair', validators=[InputRequired()])
+    office = StringField('Office', validators=[InputRequired()])
+
+
+class NewDepartmentForm(DepartmentForm):
+    submit = SubmitField('Add Department')
+
+
+class EditDepartmentForm(DepartmentForm):
+    submit = SubmitField('Apply Changes')

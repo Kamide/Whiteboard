@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template
-from whiteboard.models import User
+from flask import Blueprint, render_template, request, flash
+from whiteboard.models import Department, Major, User
 
 root = Blueprint('root', __name__, template_folder='../templates/root')
 
@@ -8,6 +8,13 @@ root = Blueprint('root', __name__, template_folder='../templates/root')
 @root.route('/index')
 def index():
     return render_template('index.html')
+
+
+@root.route('/academics')
+def academics():
+    departments = Department.query.all()
+    majors = Major.query.all()
+    return render_template('academics.html', departments=departments, majors=majors)
 
 
 @root.route('/users')

@@ -5,7 +5,6 @@
 {% block content %}
     <section>
         <header><h2>Log In</h2></header>
-        {% from "macros.html" import print_form with context %}
         {{ print_form(form=form, method="post") }}
         <footer>
             <p>

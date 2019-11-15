@@ -1,0 +1,18 @@
+{% extends "forms.html" %}
+
+{% block title %}{{ title }} Department - {{ super() }}{% endblock %}
+
+{% block content %}
+    <section>
+        <header><h2>Departments</h2></header>
+        <section class="card">
+            <header><h3>{{ title }}</h3></header>
+            {{ print_form(form=form, method="post") }}
+            <footer>
+                <p>
+                    <a href="{{ url_for('root.academics') }}" class="button float-top-right">Go Back</a>
+                </p>
+            </footer>
+        </section>
+    </section>
+{% endblock %}

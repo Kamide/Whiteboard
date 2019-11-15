@@ -70,5 +70,5 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have successfully logged out', 'success')
+    flash('You have been successfully logged out.', 'success')
     return redirect(url_for('root.index'))
