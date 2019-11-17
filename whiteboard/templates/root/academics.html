@@ -36,7 +36,7 @@
     </section>
     <section id="majors">
         <header><h2>Majors</h2></header>
-        {{ admin_link('', 'Add New Major') }}
+        {{ admin_link(url_for('admin.new_major'), 'Add New Major') }}
         {% if majors %}
             {% for major in majors %}
                 <section class="card">
@@ -44,7 +44,7 @@
                     {% if major.department %}
                         <p>Department: <strong class="emphasized">{{ major.department.name }}</strong></p>
                     {% endif %}
-                    {{ admin_link('', 'Edit') }}
+                    {{ admin_link(url_for('admin.edit_major', major_id=major.id), 'Edit') }}
                 </section>
             {% endfor %}
         {% else %}

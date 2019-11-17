@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import InputRequired, Regexp, Length, Email, EqualTo
+from wtforms import BooleanField, PasswordField, StringField, SubmitField
+from wtforms.validators import Email, EqualTo, InputRequired, Length, Regexp
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from whiteboard.models import Department
 from whiteboard.settings import CAMPUS_CARD
 
 
@@ -32,4 +34,21 @@ class NewDepartmentForm(DepartmentForm):
 
 
 class EditDepartmentForm(DepartmentForm):
+    submit = SubmitField('Apply Changes')
+
+
+def department_query():
+    return Department.query
+
+
+class MajorForm(FlaskForm):
+    name = StringField('Name')
+    department = QuerySelectField('Department', query_factory=department_query, allow_blank=True)
+
+
+class NewMajorForm(MajorForm):
+    submit = SubmitField('Add Major')
+
+
+class EditMajorForm(MajorForm):
     submit = SubmitField('Apply Changes')
