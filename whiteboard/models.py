@@ -21,12 +21,15 @@ class Department(db.Model):
 
     majors = db.relationship('Major', backref='department')
 
+    def __str__(self):
+        return self.name
+
 
 class Major(db.Model):
     __tablename__ = 'Majors'
     id = db.Column(db.Integer, primary_key=True)
-    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id', ondelete='SET NULL'))
     name = db.Column(db.String(255), nullable=False, unique=True)
+    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id', ondelete='SET NULL'))
 
 
 class User(db.Model, UserMixin):

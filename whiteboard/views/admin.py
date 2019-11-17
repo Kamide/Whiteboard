@@ -1,8 +1,8 @@
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
-from whiteboard.forms import NewDepartmentForm, EditDepartmentForm
-from whiteboard.models import db, User, Department
+from whiteboard.forms import NewDepartmentForm, EditDepartmentForm, NewMajorForm, EditMajorForm
+from whiteboard.models import db, User, Department, Major
 from whiteboard.settings import CAMPUS_CARD
 
 admin = Blueprint('admin', __name__, template_folder='../templates/admin')
@@ -91,3 +91,50 @@ def edit_department(department_id):
             flash(f'Changes to department #{department.id} have been made.', 'success')
 
     return render_template('department.html', title=f'Editing "{department.name}"', form=form)
+
+
+@admin.route('/academics/majors/new', methods=['GET', 'POST'])
+def new_major():
+    form = NewMajorForm()
+
+    if form.validate_on_submit():
+        candidate = Major.query.filter(Major.name.ilike(form.name.data)).first()
+
+        if candidate:
+            flash('A department with that name already exists.', 'error')
+        else:
+            if form.department.data:
+                new_m = Major(name=form.name.data, department_id=form.department.data.id)
+            else:
+                new_m = Major(name=form.name.data)
+
+            db.session.add(new_m)
+            db.session.commit()
+            flash(f'{new_m.name} has been created.', 'success')
+            return redirect(url_for('root.academics'))
+
+    return render_template('major.html', title='New Major', form=form)
+
+
+@admin.route('/academics/majors/edit/<major_id>', methods=['GET', 'POST'])
+def edit_major(major_id):
+    major = Major.query.filter_by(id=major_id).first()
+
+    if not major:
+        flash('This major does not exist.', 'error')
+        return redirect(url_for('root.academics'))
+
+    form = EditMajorForm(name=major.name, department=major.department)
+
+    if form.validate_on_submit():
+        candidate = Major.query.filter(Major.name.ilike(form.name.data)).first()
+
+        if candidate and candidate != major:
+            flash('A major with that name already exists.')
+        else:
+            major.name = form.name.data
+            major.department_id = form.department.data.id if form.department.data else None
+            db.session.commit()
+            flash(f'Changes to major #{major.id} have been made.', 'success')
+
+    return render_template('department.html', title=f'Editing "{major.name}"', form=form)

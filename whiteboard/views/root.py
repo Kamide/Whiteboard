@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template
 from whiteboard.models import Department, Major, User
 
 root = Blueprint('root', __name__, template_folder='../templates/root')
