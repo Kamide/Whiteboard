@@ -3,6 +3,8 @@ from os import environ
 from whiteboard import settings
 
 assert isinstance(settings.CAMPUS_CARD, settings.CampusCard)
+assert settings.DEPT_ABBREV_LEN > 0
+assert settings.COURSE_CODE_LEN > 0
 
 
 def create_app():
