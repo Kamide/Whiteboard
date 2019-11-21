@@ -4,9 +4,9 @@
 
 {% block content %}
     <section>
-        <header><h2>Departments</h2></header>
+        <header><h2>{{ title }}</h2></header>
         <section class="card">
-            <header><h3>{{ title }}</h3></header>
+            <header><h3>{{ card_title }}</h3></header>
             {{ print_form(form=form, method="post") }}
             <footer>
                 <p>

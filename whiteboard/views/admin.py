@@ -1,8 +1,8 @@
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
-from whiteboard.forms import NewDepartmentForm, EditDepartmentForm, NewMajorForm, EditMajorForm
-from whiteboard.models import db, User, Department, Major
+from whiteboard.forms import DepartmentForm, MajorForm, CourseForm
+from whiteboard.models import db, User, Department, Major, Course
 from whiteboard.settings import CAMPUS_CARD
 
 admin = Blueprint('admin', __name__, template_folder='../templates/admin')
@@ -51,7 +51,7 @@ def admissions(applicant_id):
 
 @admin.route('/academics/departments/new', methods=['GET', 'POST'])
 def new_department():
-    form = NewDepartmentForm()
+    form = DepartmentForm()
 
     if form.validate_on_submit():
         candidate = Department.query.filter(Department.name.ilike(form.name.data)).first()
@@ -59,13 +59,14 @@ def new_department():
         if candidate:
             flash('A department with that name already exists.', 'error')
         else:
-            new_dept = Department(name=form.name.data, chair=form.chair.data, office=form.office.data)
-            db.session.add(new_dept)
+            department = Department()
+            form.populate_obj(department)
+            db.session.add(department)
             db.session.commit()
-            flash(f'{new_dept.name} has been created.', 'success')
+            flash(f'{department.name} has been created.', 'success')
             return redirect(url_for('root.academics'))
 
-    return render_template('department.html', title='New Department', form=form)
+    return render_template('division.html', title='Departments', card_title='New Department', form=form)
 
 
 @admin.route('/academics/departments/edit/<department_id>', methods=['GET', 'POST'])
@@ -76,7 +77,7 @@ def edit_department(department_id):
         flash('This department does not exist.', 'error')
         return redirect(url_for('root.academics'))
 
-    form = EditDepartmentForm(name=department.name, chair=department.chair, office=department.office)
+    form = DepartmentForm(obj=department)
 
     if form.validate_on_submit():
         candidate = Department.query.filter(Department.name.ilike(form.name.data)).first()
@@ -84,18 +85,16 @@ def edit_department(department_id):
         if candidate and candidate != department:
             flash('A department with that name already exists.')
         else:
-            department.name = form.name.data
-            department.chair = form.chair.data
-            department.office = form.office.data
+            form.populate_obj(department)
             db.session.commit()
             flash(f'Changes to department #{department.id} have been made.', 'success')
 
-    return render_template('department.html', title=f'Editing "{department.name}"', form=form)
+    return render_template('division.html', title='Departments', card_title=f'Editing "{department.name}"', form=form)
 
 
 @admin.route('/academics/majors/new', methods=['GET', 'POST'])
 def new_major():
-    form = NewMajorForm()
+    form = MajorForm()
 
     if form.validate_on_submit():
         candidate = Major.query.filter(Major.name.ilike(form.name.data)).first()
@@ -103,17 +102,14 @@ def new_major():
         if candidate:
             flash('A department with that name already exists.', 'error')
         else:
-            if form.department.data:
-                new_m = Major(name=form.name.data, department_id=form.department.data.id)
-            else:
-                new_m = Major(name=form.name.data)
-
-            db.session.add(new_m)
+            major = Major()
+            form.populate_obj(major)
+            db.session.add(major)
             db.session.commit()
-            flash(f'{new_m.name} has been created.', 'success')
+            flash(f'{major.name} has been created.', 'success')
             return redirect(url_for('root.academics'))
 
-    return render_template('major.html', title='New Major', form=form)
+    return render_template('division.html', title='Majors', card_title='New Major', form=form)
 
 
 @admin.route('/academics/majors/edit/<major_id>', methods=['GET', 'POST'])
@@ -124,7 +120,7 @@ def edit_major(major_id):
         flash('This major does not exist.', 'error')
         return redirect(url_for('root.academics'))
 
-    form = EditMajorForm(name=major.name, department=major.department)
+    form = MajorForm(obj=major)
 
     if form.validate_on_submit():
         candidate = Major.query.filter(Major.name.ilike(form.name.data)).first()
@@ -132,9 +128,51 @@ def edit_major(major_id):
         if candidate and candidate != major:
             flash('A major with that name already exists.')
         else:
-            major.name = form.name.data
-            major.department_id = form.department.data.id if form.department.data else None
+            form.populate_obj(major)
             db.session.commit()
             flash(f'Changes to major #{major.id} have been made.', 'success')
 
-    return render_template('department.html', title=f'Editing "{major.name}"', form=form)
+    return render_template('division.html', title='Majors', card_title=f'Editing "{major.name}"', form=form)
+
+
+@admin.route('/academics/courses/new', methods=['GET', 'POST'])
+def new_course():
+    form = CourseForm()
+
+    if form.validate_on_submit():
+        candidate = Course.query.filter_by(department_id=form.department.data.id, code=form.code.data).first()
+
+        if candidate:
+            flash('A course with that code already exists.', 'error')
+        else:
+            course = Course()
+            form.populate_obj(course)
+            db.session.add(course)
+            db.session.commit()
+            flash(f'{course.department.abbreviation} {course.code} ({course.name}) has been created.', 'success')
+            return redirect(url_for('root.academics'))
+
+    return render_template('division.html', title='Courses', card_title='New Course', form=form)
+
+
+@admin.route('/academics/courses/edit/<course_id>', methods=['GET', 'POST'])
+def edit_course(course_id):
+    course = Course.query.filter_by(id=course_id).first()
+
+    if not course:
+        flash('This course does not exist.', 'error')
+        return redirect(url_for('root.academics'))
+
+    form = CourseForm(obj=course)
+
+    if form.validate_on_submit():
+        candidate = Course.query.filter_by(department_id=form.department.data.id, code=form.code.data).first()
+
+        if candidate and candidate != course:
+            flash('A course with that code already exists.')
+        else:
+            form.populate_obj(course)
+            db.session.commit()
+            flash(f'Changes to course #{course.id} have been made.', 'success')
+
+    return render_template('division.html', title='Courses', card_title=f'Editing "{course.name}"', form=form)
