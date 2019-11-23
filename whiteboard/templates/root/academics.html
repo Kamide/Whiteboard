@@ -1,12 +1,6 @@
-{% extends "layout.html" %}
+{% extends 'layout.html' %}
 
-{% macro admin_link(href, caption) %}
-    {% if current_user.is_teacher %}
-        <p>
-            <a class="button float-top-right" href="{{ href }}">{{ caption }}</a>
-        </p>
-    {% endif %}
-{% endmacro %}
+{% from 'macros.html' import admin_link with context %}
 
 {% block title %}Academics - {{ super() }}{% endblock %}
 
@@ -17,6 +11,7 @@
             <li><a href="#departments">Departments</a></li>
             <li><a href="#majors">Majors</a></li>
             <li><a href="#majors">Courses</a></li>
+            <li><a href="#terms">{{ config.ACADEMIC_TERM.system_plural_capital }}</a></li>
         </ul>
     </nav>
     <section id="departments">
@@ -25,7 +20,7 @@
         {% if departments %}
             {% for department in departments %}
                 <section class="card">
-                    <h3>{{ department.name }} ({{ department.abbreviation }})</h3>
+                    <h3>{{ department }}</h3>
                     <p>Chair: <strong class="emphasized">{{ department.chair }}</strong></p>
                     <p>Office: <strong class="emphasized">{{ department.office }}</strong></p>
                     {{ admin_link(url_for('admin.edit_department', department_id=department.id), 'Edit') }}
@@ -41,7 +36,7 @@
         {% if majors %}
             {% for major in majors %}
                 <section class="card">
-                    <h3>{{ major.name }}</h3>
+                    <h3>{{ major }}</h3>
                     {% if major.department %}
                         <p>Department: <strong class="emphasized">{{ major.department.name }}</strong></p>
                     {% endif %}
@@ -58,13 +53,29 @@
         {% if courses %}
             {% for course in courses %}
                 <section class="card">
-                    <h3>{{ course.name }}</h3>
-                    <p>Course Code: <strong class="emphasized">{{ course.department.abbreviation }} {{ course.code }}</strong></p>
+                    <h3>{{ course }}</h3>
+                    <p>Name: <strong class="emphasized">{{ course.name }}</strong></p>
                     {{ admin_link(url_for('admin.edit_course', course_id=course.id), 'Edit') }}
                 </section>
             {% endfor %}
         {% else %}
             <p class="emphasized"><em>No courses listed.</em></p>
+        {% endif %}
+    </section>
+    <section id="terms">
+        <header><h2>{{ config.ACADEMIC_TERM.system_plural_capital }}</h2></header>
+        {{ admin_link(url_for('admin.new_term'), 'Add New ' + config.ACADEMIC_TERM.system_capital) }}
+        {% if terms %}
+            {% for term in terms %}
+                <section class="card">
+                    <h3>{{ term }}</h3>
+                    <p>Start Date: <strong class="emphasized">{{ term.start_date }}</strong></p>
+                    <p>End Date: <strong class="emphasized">{{ term.end_date }}</strong></p>
+                    {{ admin_link(url_for('admin.edit_term', term_id=term.id), 'Edit') }}
+                </section>
+            {% endfor %}
+        {% else %}
+            <p class="emphasized"><em>No {{ config.ACADEMIC_TERM.system_plural }} listed.</em></p>
         {% endif %}
     </section>
 {% endblock %}

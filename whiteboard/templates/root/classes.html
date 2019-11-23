@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% from 'macros.html' import admin_link with context %}
+
+{% block title %}Classes - {{ super() }}{% endblock %}
+
+{% block content %}
+    <section>
+        <header><h2>Classes</h2></header>
+        {{ admin_link(url_for('admin.new_class'), 'Add New Class') }}
+        {% if classes %}
+            {% for class in classes %}
+                <section class="card">
+                    <h3>{{ class }}</h3>
+                    <p>Schedule: <strong class="emphasized">{{ class.schedule }}</strong></p>
+                    <p>Location: <strong class="emphasized">{{ class.location }}</strong></p>
+                    <p>Instructor: <strong class="emphasized">{{ class.teacher }}</strong></p>
+                    {% if class.teacher.user == current_user %}
+                        {{ admin_link(url_for('admin.edit_class', class_id=class.id), 'Edit') }}
+                    {% endif %}
+                </section>
+            {% endfor %}
+        {% else %}
+            <p class="emphasized"><em>No classes listed.</em></p>
+        {% endif %}
+    </section>
+{% endblock %}

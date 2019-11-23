@@ -1,4 +1,4 @@
-{% from "macros.html" import nav_link with context %}
+{% from 'macros.html' import nav_link with context %}
 
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -14,9 +14,10 @@
     <body>
         <header class="masthead">
             <nav class="masthead">
-                <header><h1><a {% if request.endpoint == "root.index" %}class="active-page"{% endif %} href="{{ url_for('root.index') }}" title="Home Page">Whiteboard</a></h1></header>
+                <header><h1><a {% if request.endpoint == 'root.index' %}class="active-page"{% endif %} href="{{ url_for('root.index') }}" title="Home Page">Whiteboard</a></h1></header>
                 <ul>
-                    {{ nav_link('root.academics', 'Academics') }}
+                    {{ nav_link('root.classes', 'Classes', current_user.is_authenticated) }}
+                    {{ nav_link('root.academics', 'Academics', title='Departments, Majors, Courses') }}
                     {{ nav_link('root.users', 'Users', current_user.is_authenticated) }}
                     {{ nav_link('admin.applicants', 'Applicants', current_user.is_teacher) }}
                     {{ nav_link('auth.register', 'Register', current_user.is_anonymous) }}

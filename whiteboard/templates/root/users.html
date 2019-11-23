@@ -1,9 +1,7 @@
-{% extends "forms.html" %}
-
-{% from "macros.html" import get_name with context %}
+{% extends 'forms.html' %}
 
 {% macro print_user(user) %}
-    <li>{{ get_name(user) }} ({{ user.username }})</li>
+    <li>{{ user }}</li>
 {% endmacro %}
 
 {% block title %}Users - {{ super() }}{% endblock %}

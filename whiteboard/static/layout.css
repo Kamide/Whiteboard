@@ -20,7 +20,7 @@
     --error-color: hsl(342, 100%, 42%);
 }
 
-html, body, h2, p, ul, header.masthead *, .messages.masthead ul {
+html, body, h2, h3, h4, p, ul, header.masthead *, .messages.masthead ul {
     margin: 0;
     padding: 0;
     border: 0;
@@ -33,7 +33,7 @@ body {
     line-height: 1.5;
 }
 
-h2, h3, p, ul, .card {
+h2, h3, h4, p, ul, .card {
     margin: var(--margin-minor) 0;
 }
 
