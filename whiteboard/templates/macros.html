@@ -1,28 +1,16 @@
-{% macro get_identity(user=current_user) %}
-    {% if user.is_authenticated %}
-        {% if user.is_teacher %}
-            Teacher
-        {% else %}
-            Student
-        {% endif %}
-    {% else %}
-        Anonymous
-    {% endif %}
-{% endmacro %}
-
-{% macro get_name(user=current_user) %}
-    {% if user.display_name %}
-        {{ user.display_name }}
-    {% else %}
-        {{ user.full_name }}
-    {% endif %}
-{% endmacro %}
-
-{% macro nav_link(href, caption, print_condition=True) %}
+{% macro nav_link(href, caption, print_condition=True, title='') %}
     {% if print_condition %}
         <li>
-            <a {% if href == request.endpoint %}class="active-page"{% endif %} href="{{ url_for(href) }}">{{ caption }}</a>
+            <a {% if href == request.endpoint %}class="active-page"{% endif %} href="{{ url_for(href) }}" {% if title %}title="{{ title }}"{% endif %}>{{ caption }}</a>
         </li>
+    {% endif %}
+{% endmacro %}
+
+{% macro admin_link(href, caption) %}
+    {% if current_user.is_teacher %}
+        <p>
+            <a class="button float-top-right" href="{{ href }}">{{ caption }}</a>
+        </p>
     {% endif %}
 {% endmacro %}
 
@@ -30,17 +18,17 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 {% endmacro %}
 
-{% macro print_form(form, method, action="") %}
+{% macro print_form(form, method, action='') %}
     <form action="{{ action }}" method="{{ method }}">
         {{ form.csrf_token }}
         {% for field in form %}
-            {% if field.type != "CSRFTokenField" %}
+            {% if field.type != 'CSRFTokenField' %}
                 <div>
-                    {% if field.type == "BooleanField" %}
+                    {% if field.type == 'BooleanField' %}
                         {{ field }}
                         {{ field.label }}
                     {% else %}
-                        {% if field.type != "SubmitField" %}
+                        {% if field.type != 'SubmitField' %}
                             {{ field.label }}
                         {% endif %}
                         {{ field }}

@@ -1,4 +1,4 @@
-{% extends "forms.html" %}
+{% extends 'forms.html' %}
 
 {% block title %}Register - {{ super() }}{% endblock %}
 
@@ -6,7 +6,7 @@
     <section>
         <header><h2>Register</h2></header>
         <p class="emphasized"><em>Completed applications will be verified by faculty or staff members.</em></p>
-        {{ print_form(form=form, method="post") }}
+        {{ print_form(form=form, method='post') }}
         <footer>
             <p>
                 Already have an account? <a href="{{ url_for('auth.login') }}">Click here to log in.</a>

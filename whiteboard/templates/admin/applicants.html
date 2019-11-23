@@ -1,10 +1,9 @@
-{% extends "forms.html" %}
+{% extends 'forms.html' %}
 
-{% from "macros.html" import get_identity, get_csrf_token with context %}
 
 {% macro application(applicant) %}
     <header>
-        <h3 {% if applicant.is_teacher %}class="emphasized"{% endif %}>{{ get_identity(applicant) }} Applicant #{{ applicant.id }}</h3>
+        <h3 {% if applicant.is_teacher %}class="emphasized"{% endif %}>{{ applicant.identity }} Applicant #{{ applicant.id }}</h3>
     </header>
     <table>
         <tr>
