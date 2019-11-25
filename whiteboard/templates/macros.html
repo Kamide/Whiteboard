@@ -35,6 +35,10 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 {% endmacro %}
 
+{% macro print_user(user) %}
+    <li><a href="{{ url_for('root.user_info', user_id=user.id) }}">{{ user }}</a></li>
+{% endmacro %}
+
 {% macro print_form(form, method, action='') %}
     <form action="{{ action }}" method="{{ method }}">
         {{ form.csrf_token }}

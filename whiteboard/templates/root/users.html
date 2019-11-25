@@ -1,8 +1,6 @@
 {% extends 'forms.html' %}
 
-{% macro print_user(user) %}
-    <li>{{ user }}</li>
-{% endmacro %}
+{% from 'macros.html' import print_user with context %}
 
 {% block title %}Users - {{ super() }}{% endblock %}
 
