@@ -59,6 +59,8 @@ class Student(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('Users.id', ondelete='CASCADE'), primary_key=True)
     major_id = db.Column(db.Integer, db.ForeignKey('Majors.id', ondelete='SET NULL'))
 
+    enrollments = db.relationship('Enrollment', backref='student', cascade='all, delete')
+
     def __str__(self):
         return str(self.user)
 
@@ -128,7 +130,17 @@ class Class(db.Model):
     schedule = db.Column(db.String(255), nullable=False)
     location = db.Column(db.String(255), nullable=False)
 
+    enrollments = db.relationship('Enrollment', backref='class_', cascade='all, delete')
     __table_args__ = (db.UniqueConstraint('term_id', 'course_id', 'section'), )
 
     def __str__(self):
         return f'{self.term} {self.course}-{self.section}'
+
+
+class Enrollment(db.Model):
+    __tablename__ = 'Enrollments'
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.user_id', ondelete='CASCADE'), primary_key=True)
+    class_id = db.Column(db.Integer, db.ForeignKey('Classes.id', ondelete='CASCADE'), primary_key=True)
+
+    def __str__(self):
+        return f'{self.student}—{self.class_}'
