@@ -29,4 +29,7 @@ def create_app():
         from whiteboard.views.admin import admin as admin_blueprint
         app.register_blueprint(admin_blueprint)
 
+        from whiteboard.views.errorpages import errorpages as ep_blueprint
+        app.register_blueprint(ep_blueprint)
+
         return app

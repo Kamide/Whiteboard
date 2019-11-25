@@ -1,16 +1,33 @@
-{% macro nav_link(href, caption, print_condition=True, title='') %}
+{% macro nav_link(destination, caption, print_condition=True, title='') %}
     {% if print_condition %}
         <li>
-            <a {% if href == request.endpoint %}class="active-page"{% endif %} href="{{ url_for(href) }}" {% if title %}title="{{ title }}"{% endif %}>{{ caption }}</a>
+            {% set destination_is_endpoint = '/' not in destination  %}
+            <a {% if destination_is_endpoint and destination == request.endpoint %}
+                class="active-page"
+            {% endif %}
+            {% if destination_is_endpoint %}
+                href="{{ url_for(destination) }}"
+            {% else %}
+                href="{{ destination }}"
+            {% endif %}
+            {% if title %}
+                title="{{ title }}"
+            {% endif %}
+            >{{ caption }}</a>
         </li>
     {% endif %}
 {% endmacro %}
 
-{% macro admin_link(href, caption) %}
-    {% if current_user.is_teacher %}
-        <p>
-            <a class="button float-top-right" href="{{ href }}">{{ caption }}</a>
-        </p>
+{% macro action_links(heading_level, print_condition=True) %}
+    {% if print_condition %}
+        {% if not admin_only or (admin_only and current_user.is_teacher) %}
+            <nav class="actions">
+                <header><{{ heading_level }}>Actions</{{ heading_level }}></header>
+                <ul>
+                    {{ caller() }}
+                </ul>
+            </nav>
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
@@ -44,4 +61,10 @@
             {% endif %}
         {% endfor %}
     </form>
+{% endmacro %}
+
+{% macro print_class_info(class) %}
+    <p>Schedule: <strong class="emphasized">{{ class.schedule }}</strong></p>
+    <p>Location: <strong class="emphasized">{{ class.location }}</strong></p>
+    <p>Instructor: <strong class="emphasized">{{ class.teacher }}</strong></p>
 {% endmacro %}
