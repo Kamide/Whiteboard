@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from whiteboard.forms import EnrollmentForm
 from whiteboard.models import db, User, Student, Department, Major, Course, Term, Class, Enrollment
@@ -19,6 +19,17 @@ def users():
     teachers = active_users.filter(User.teacher != None)
     students = active_users.filter(User.student != None)
     return render_template('users.html', teachers=teachers, students=students)
+
+
+@root.route('/users/<user_id>')
+@login_required
+def user_info(user_id):
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user:
+        abort(404)
+
+    return render_template('user.html', user=user)
 
 
 @root.route('/academics')
