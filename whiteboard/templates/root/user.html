@@ -1,0 +1,11 @@
+{% extends 'users.html' %}
+
+{% block title %}{{ user }} - {{ super() }}{% endblock %}
+
+{% block content %}
+    <section>
+        <header><h2>{{ user }}</h2></header>
+        <p>Email: <strong class="emphasized">{{ user.email }}</strong></p>
+        <p>Join Date: <strong class="emphasized">{{ user.join_date }}</strong></p>
+    </section>
+{% endblock %}
