@@ -66,5 +66,5 @@ def class_info(class_id):
                     flash(f'{student} has been enrolled.', 'success')
             else:
                 flash('This student does not exist!', 'error')
-
-    return render_template('class.html', current_class=current_class, students=students, form=form)
+        return render_template('class.html', current_class=current_class, students=students, form=form)
+    return render_template('class.html', current_class=current_class, students=students)
