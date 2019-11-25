@@ -37,7 +37,7 @@ h2, h3, h4, p, ul, .card {
     margin: var(--margin-minor) 0;
 }
 
-ul, .indented {
+ul {
     margin-left: var(--margin-major);
 }
 
@@ -94,7 +94,7 @@ nav.masthead a.active-page::after {
     color: var(--error-color);
 }
 
-.messages.masthead h2 {
+.messages.masthead header, .actions header {
     display: none;
 }
 
@@ -125,14 +125,26 @@ main section {
     position: relative;
 }
 
-.card, .button {
+.actions ul {
+    margin-left: 0;
+}
+
+.card, .actions li {
     border: var(--thin) solid var(--card-shadow-color);
     border-radius: var(--thick);
     background-color: var(--card-bg-color);
-    box-shadow: 0 var(--medium) var(--thick) var(--card-shadow-color);
+    box-shadow: 0 var(--thin) var(--thin) var(--card-shadow-color);
 }
 
-.button {
+.actions li:hover {
+    border-color: var(--highlight-color);
+}
+
+.actions li, .actions a {
+    display: inline-block;
+}
+
+.actions a {
     padding: calc(var(--margin-minor) / 4) calc(var(--margin-minor) / 2);
 }
 
@@ -142,12 +154,6 @@ footer {
 
 .emphasized {
     color: var(--text-color-saturated);
-}
-
-.float-top-right {
-    position: absolute;
-    top: 0;
-    right: 0;
 }
 
 @media only screen and (min-width: 800px) {
@@ -167,6 +173,20 @@ footer {
         bottom: 0;
         left: 25%;
         background: linear-gradient(to right, var(--anchor-color) 25%, var(--main-bg-color) 25%);
+    }
+
+    .actions {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .card .actions {
+        padding: var(--thick);
+    }
+
+    .actions ul {
+        margin: 0;
     }
 }
 

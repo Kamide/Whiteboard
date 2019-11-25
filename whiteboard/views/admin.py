@@ -255,7 +255,7 @@ def new_class():
             flash(f'{class_} has been created.', 'success')
             return redirect(url_for('root.classes'))
 
-    return render_template('division.html', title='Classes', card_title='New Class', url_link='root.classes', form=form)
+    return render_template('division.html', title='Classes', card_title='New Class', back_url='root.classes', form=form)
 
 
 @admin.route('/classes/edit/<class_id>', methods=['GET', 'POST'])
@@ -282,4 +282,4 @@ def edit_class(class_id):
             db.session.commit()
             flash(f'Changes to class #{class_.id} have been made.', 'success')
 
-    return render_template('division.html', title='Classes', card_title=f'Editing Class #{class_.id}: {class_}', url_link='root.classes', form=form)
+    return render_template('division.html', title='Classes', card_title=f'Editing Class #{class_.id}: {class_}', back_url='root.classes', form=form)
