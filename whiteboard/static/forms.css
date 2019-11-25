@@ -15,7 +15,7 @@ form:not(.inlined) input[type=checkbox], form:not(.inlined) input[type=submit] {
     margin-top: var(--margin-minor);
 }
 
-form.inlined input[type=submit] {
+form.inlined input {
     vertical-align: middle;
 }
 

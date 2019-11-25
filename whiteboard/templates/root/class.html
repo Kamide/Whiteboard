@@ -8,11 +8,21 @@
         {{ print_class_info(current_class) }}
         <section>
             <header><h3>Students</h3></header>
-            {% call action_links('h4', current_user.is_teacher) %}
-                {# TODO #}
-                {{ nav_link('/', 'Enroll Students') }}
-            {% endcall %}
-            <p class="emphasized"><em>No students enrolled.</em></p>
+            {% if current_user.is_teacher %}
+                <section class="card">
+                    <header><h4>Enroll Student</h4></header>
+                    {{ print_form(form=form, method='post') }}
+                </section>
+            {% endif %}
+            {% if students.count() > 0 %}
+                <ul>
+                    {% for student in students %}
+                        <li>{{ student }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="emphasized"><em>No students enrolled.</em></p>
+            {% endif %}
         </section>
     </section>
 {% endblock %}

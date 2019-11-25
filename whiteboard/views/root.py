@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import login_required
-from whiteboard.models import User, Department, Major, Course, Term, Class
+from flask_login import login_required, current_user
+from whiteboard.forms import EnrollmentForm
+from whiteboard.models import db, User, Student, Department, Major, Course, Term, Class, Enrollment
 
 root = Blueprint('root', __name__, template_folder='../templates/root')
 
@@ -36,13 +37,34 @@ def classes():
     return render_template('classes.html', classes=classes)
 
 
-@root.route('/classes/<class_id>')
+@root.route('/classes/<class_id>', methods=['GET', 'POST'])
 @login_required
 def class_info(class_id):
     current_class = Class.query.filter_by(id=class_id).first()
 
     if not current_class:
-        flash('This class does not exist!')
+        flash('This class does not exist!', 'error')
         return redirect(url_for('root.classes'))
 
-    return render_template('class.html', current_class=current_class)
+    students = Student.query.join(Enrollment).filter_by(class_id=class_id)
+
+    if current_user.is_teacher:
+        form = EnrollmentForm()
+
+        if form.validate_on_submit():
+            student = Student.query.filter_by(user_id=form.student.data.user_id).first()
+
+            if student:
+                student_enrolled = Enrollment.query.filter_by(student_id=student.user.id, class_id=class_id).first()
+
+                if student_enrolled:
+                    flash('This student is already enrolled.')
+                else:
+                    enrollment = Enrollment(student_id=student.user.id, class_id=class_id)
+                    db.session.add(enrollment)
+                    db.session.commit()
+                    flash(f'{student} has been enrolled.', 'success')
+            else:
+                flash('This student does not exist!', 'error')
+
+    return render_template('class.html', current_class=current_class, students=students, form=form)

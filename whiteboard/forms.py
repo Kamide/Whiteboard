@@ -3,8 +3,12 @@ from wtforms import BooleanField, PasswordField, StringField, SubmitField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, InputRequired, Length, Regexp, ValidationError
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from whiteboard.models import Department, Term, Course
+from whiteboard.models import User, Student, Department, Term, Course
 from whiteboard import settings as wbs
+
+
+def student_query():
+    return Student.query.join(User).filter(User.join_date != None)
 
 
 def department_query():
@@ -75,3 +79,8 @@ class ClassForm(FlaskForm):
     schedule = StringField('Schedule', validators=[InputRequired(), Length(max=255)])
     location = StringField('Location', validators=[InputRequired(), Length(max=255)])
     submit = SubmitField('Submit')
+
+
+class EnrollmentForm(FlaskForm):
+    student = QuerySelectField('Student', query_factory=student_query, allow_blank=False)
+    submit = SubmitField('Add')
