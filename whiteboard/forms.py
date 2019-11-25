@@ -1,7 +1,7 @@
-from datetime import date, datetime
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, PasswordField, StringField, SubmitField, DateField
-from wtforms.validators import Email, EqualTo, InputRequired, Length, Regexp, ValidationError, DataRequired
+from wtforms import BooleanField, PasswordField, StringField, SubmitField
+from wtforms.fields.html5 import DateField
+from wtforms.validators import Email, EqualTo, InputRequired, Length, Regexp, ValidationError
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from whiteboard.models import User, Student, Department, Term, Course
 from whiteboard import settings as wbs
@@ -63,10 +63,8 @@ class CourseForm(FlaskForm):
 
 class TermForm(FlaskForm):
     name = StringField(wbs.ACADEMIC_TERM.name_capital, validators=[InputRequired(), Length(max=255)])
-    start_date = DateField(
-        u"Date", default=datetime.today(), validators=[DataRequired()])
-    end_date = DateField(
-        u"Date", default=datetime.today(), validators=[DataRequired()])
+    start_date = DateField('Start Date')
+    end_date = DateField('End Date')
     submit = SubmitField('Submit')
 
     def validate_end_date(form, field):
