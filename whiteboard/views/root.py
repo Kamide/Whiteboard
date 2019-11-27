@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from whiteboard.forms import EnrollmentForm
 from whiteboard.models import db, User, Student, Department, Major, Course, Term, Class, Enrollment
@@ -63,19 +63,32 @@ def class_info(class_id):
         form = EnrollmentForm()
 
         if form.validate_on_submit():
+            if request.method != 'POST' or not request.form['action']:
+                abort(400)
+
             student = Student.query.filter_by(user_id=form.student.data.user_id).first()
 
             if student:
                 student_enrolled = Enrollment.query.filter_by(student_id=student.user.id, class_id=class_id).first()
 
-                if student_enrolled:
-                    flash('This student is already enrolled.')
+                if request.form['action'] == 'Enroll Student':
+                    if student_enrolled:
+                        flash('This student is already enrolled in this class.')
+                    else:
+                        enrollment = Enrollment(student_id=student.user.id, class_id=class_id)
+                        db.session.add(enrollment)
+                        db.session.commit()
+                        flash(f'{student} has been enrolled.', 'success')
                 else:
-                    enrollment = Enrollment(student_id=student.user.id, class_id=class_id)
-                    db.session.add(enrollment)
-                    db.session.commit()
-                    flash(f'{student} has been enrolled.', 'success')
+                    if student_enrolled:
+                        db.session.delete(student_enrolled)
+                        db.session.commit()
+                        flash(f'{student} has been withdrawn from the class.', 'success')
+                    else:
+                        flash("You cannot withdraw a student that has not been enrolled.")
             else:
                 flash('This student does not exist!', 'error')
+
         return render_template('class.html', current_class=current_class, students=students, form=form)
+
     return render_template('class.html', current_class=current_class, students=students)

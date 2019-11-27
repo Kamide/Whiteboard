@@ -4,6 +4,11 @@
 
 {% block title %}{{ current_class }} - {{ super() }}{% endblock %}
 
+{% block style %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
+{% endblock %}
+
 {% block content %}
     <section>
         <header><h2>{{ current_class }}</h2></header>
@@ -12,14 +17,33 @@
             <header><h3>Students</h3></header>
             {% if current_user.is_teacher %}
                 <section class="card">
-                    <header><h4>Enroll Student</h4></header>
-                    {{ print_form(form=form, method='post') }}
+                    <header><h4>Registration</h4></header>
+                    <form class="inlined" action="" method="post">
+                        <div>
+                            {{ get_csrf_token() }}
+                            {{ form.student.label }}
+                            {{ form.student }}
+                        </div>
+                        <div>
+                            <input type="submit" name="action" value="Enroll Student">
+                            <input type="submit" name="action" value="Withdraw Student">
+                        </div>
+                    </form>
                 </section>
             {% endif %}
             {% if students.count() > 0 %}
-                <ul>
+                <ul class="users-list">
                     {% for student in students %}
-                        {{ print_user(student.user) }}
+                        {% if current_class.teacher.user == current_user %}
+                            {% call print_user(student.user) %}
+                                <form class="inlined" action="{{ url_for('admin.mark_attendance', class_id=current_class.id) }}" method="post">
+                                    {{ get_csrf_token() }}
+                                    <input type="submit" name="action" value="Mark Present">
+                                </form>
+                            {% endcall %}
+                        {% else %}
+                            {{ print_user(student.user) }}
+                        {% endif %}
                     {% endfor %}
                 </ul>
             {% else %}

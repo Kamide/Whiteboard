@@ -35,12 +35,17 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 {% endmacro %}
 
-{% macro print_user(user) %}
-    <li><a href="{{ url_for('root.user_info', user_id=user.id) }}">{{ user }}</a></li>
+{% macro print_user(user, class='') %}
+    <li class="{% if class %}{{ class }} {% endif %}card">
+        <a href="{{ url_for('root.user_info', user_id=user.id) }}">{{ user }}</a>
+        {% if caller %}
+            {{ caller() }}
+        {% endif %}
+    </li>
 {% endmacro %}
 
-{% macro print_form(form, method, action='') %}
-    <form action="{{ action }}" method="{{ method }}">
+{% macro print_form(form, method, action='', class='') %}
+    <form {% if class %}class="{{ class }}"{% endif %} action="{{ action }}" method="{{ method }}">
         {{ form.csrf_token }}
         {% for field in form %}
             {% if field.type != 'CSRFTokenField' %}

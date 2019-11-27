@@ -7,7 +7,11 @@ form {
     margin: var(--margin-minor) 0;
 }
 
-form:not(.inlined) input:not([type=checkbox]) {
+form:not(.inlined) input {
+    margin: calc(var(--margin-minor) / 2) 0;
+}
+
+form:not(.inlined) input:not([type=checkbox]), form:not(.inlined) input:not([type=submit]) {
     display: block;
 }
 
@@ -20,7 +24,6 @@ form.inlined input {
 }
 
 label, input {
-    margin: calc(var(--margin-minor) / 2) 0;
     color: inherit;
     font-size: inherit;
     line-height: inherit;
@@ -72,4 +75,12 @@ input[type=submit]:active {
 input[type=submit].emphasized {
     color: inherit;
     font-weight: bold;
+}
+
+@media only screen and (min-width: 800px) {
+    form.inlined {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 }

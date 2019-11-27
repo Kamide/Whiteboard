@@ -83,4 +83,3 @@ class ClassForm(FlaskForm):
 
 class EnrollmentForm(FlaskForm):
     student = QuerySelectField('Student', query_factory=student_query, allow_blank=False)
-    submit = SubmitField('Add')

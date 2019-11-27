@@ -283,3 +283,10 @@ def edit_class(class_id):
             flash(f'Changes to class #{class_.id} have been made.', 'success')
 
     return render_template('division.html', title='Classes', card_title=f'Editing Class #{class_.id}: {class_}', back_url='root.classes', form=form)
+
+
+@admin.route('/classes/<class_id>/attendance/', methods=['POST'])
+def mark_attendance(class_id):
+    # TODO
+    flash('Marked as present.', 'success')
+    return redirect(url_for('root.class_info', class_id=class_id))

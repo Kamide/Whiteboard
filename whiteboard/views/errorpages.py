@@ -13,3 +13,9 @@ def page_forbidden(e):
 def page_not_found(e):
     message = 'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.'
     return render_template('error.html', title='404 Not Found', message=message), 404
+
+
+@errorpages.app_errorhandler(405)
+def method_not_allowed(e):
+    message = 'The method is not allowed for the requested URL.'
+    return render_template('error.html', title='405 Method Not Allowed', message=message), 405

@@ -1,14 +1,16 @@
-{% extends 'forms.html' %}
+{% extends 'layout.html' %}
 
 {% from 'macros.html' import print_user with context %}
 
 {% block title %}Users - {{ super() }}{% endblock %}
 
+{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">{% endblock %}
+
 {% block content %}
     <section>
         <header><h2>Teachers</h2></header>
         {# There is no need to check if `teachers` is empty because, if this page is being viewed, there is at least one teacher. #}
-        <ul>
+        <ul class="users-list">
             {% for teacher in teachers %}
                 {{ print_user(teacher) }}
             {% endfor %}
@@ -17,7 +19,7 @@
     <section>
         <header><h2>Students</h2></header>
         {% if students.count() > 0 %}
-            <ul>
+            <ul class="users-list">
                 {% for student in students %}
                     {{ print_user(student) }}
                 {% endfor %}

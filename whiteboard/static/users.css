@@ -1,0 +1,24 @@
+
+.users-list {
+    margin-left: 0;
+}
+
+.users-list ul {
+    position: relative;
+    margin: 0;
+}
+
+.users-list > li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.users-list > li > a {
+    flex: 1;
+    padding: var(--margin-minor) 0;
+}
+
+.users-list form {
+    margin: 0;
+}

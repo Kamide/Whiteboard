@@ -1,6 +1,6 @@
 {% extends 'forms.html' %}
 
-{% from 'macros.html' import action_links, print_class_info with context %}
+{% from 'macros.html' import action_links, print_class_info, get_csrf_token with context %}
 
 {% block title %}Classes - {{ super() }}{% endblock %}
 
