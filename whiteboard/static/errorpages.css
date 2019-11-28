@@ -9,7 +9,7 @@
     font-size: 1.2em;
 }
 
-#board header {
+#board > header {
     display: flex;
     align-items: center;
     width: 300px;

@@ -18,10 +18,10 @@
     {% endif %}
 {% endmacro %}
 
-{% macro action_links(heading_level, print_condition=True) %}
+{% macro action_links(heading_level, print_condition=True, class='actions float-top-right') %}
     {% if print_condition %}
         {% if not admin_only or (admin_only and current_user.is_teacher) %}
-            <nav class="actions">
+            <nav {% if class %}class="{{ class }}"{% endif %}>
                 <header><{{ heading_level }}>Actions</{{ heading_level }}></header>
                 <ul>
                     {{ caller() }}
@@ -37,7 +37,7 @@
 
 {% macro print_user(user, class='') %}
     <li class="{% if class %}{{ class }} {% endif %}card">
-        <a href="{{ url_for('root.user_info', user_id=user.id) }}">{{ user }}</a>
+        <a href="{{ url_for('auth.user_info', user_id=user.id) }}">{{ user }}</a>
         {% if caller %}
             {{ caller() }}
         {% endif %}

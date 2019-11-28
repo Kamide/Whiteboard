@@ -41,7 +41,7 @@
             {% for applicant in applicants %}
                 <section class="applicant card">
                     {{ application(applicant) }}
-                    <form class="inlined" action="{{ url_for('admin.admissions', applicant_id=applicant.id) }}" method="post">
+                    <form class="inlined" action="{{ url_for('auth.admissions', applicant_id=applicant.id) }}" method="post">
                         <div>
                             {{ get_csrf_token() }}
                             <input class="emphasized" type="submit" name="decision" value="Accept">

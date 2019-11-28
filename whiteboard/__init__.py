@@ -1,5 +1,5 @@
-from flask import Flask
 from os import environ
+from flask import Flask
 from whiteboard import settings as wbs
 
 assert isinstance(wbs.CAMPUS_CARD, wbs.CampusCard) and isinstance(wbs.ACADEMIC_TERM, wbs.AcademicTerm)
@@ -20,16 +20,19 @@ def create_app():
         from whiteboard.views import csrf
         csrf.init_app(app)
 
+        from whiteboard.views.exceptions import exceptions as exceptions_blueprint
+        app.register_blueprint(exceptions_blueprint)
+
         from whiteboard.views.root import root as root_blueprint
         app.register_blueprint(root_blueprint)
 
         from whiteboard.views.auth import auth as auth_blueprint
         app.register_blueprint(auth_blueprint)
 
-        from whiteboard.views.admin import admin as admin_blueprint
-        app.register_blueprint(admin_blueprint)
+        from whiteboard.views.academics import academics as academics_blueprint
+        app.register_blueprint(academics_blueprint)
 
-        from whiteboard.views.errorpages import errorpages as ep_blueprint
-        app.register_blueprint(ep_blueprint)
+        from whiteboard.views.classes import classes as classes_blueprint
+        app.register_blueprint(classes_blueprint)
 
         return app

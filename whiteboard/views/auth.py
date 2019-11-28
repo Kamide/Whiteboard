@@ -1,20 +1,13 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import login_required, login_user, logout_user, current_user
-from functools import wraps
-from werkzeug.security import generate_password_hash, check_password_hash
-from whiteboard.forms import RegistrationForm, LoginForm
-from whiteboard.models import db, User, Teacher, Student
+from datetime import datetime
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask_login import login_required, login_user, logout_user
+from werkzeug.security import check_password_hash, generate_password_hash
+from whiteboard import settings as wbs
+from whiteboard.forms import LoginForm, RegistrationForm
+from whiteboard.models import Student, Teacher, User, db
+from whiteboard.views import admin_required, anonymous_required
 
 auth = Blueprint('auth', __name__, template_folder='../templates/auth')
-
-
-def anonymous_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if current_user.is_anonymous:
-            return f(*args, **kwargs)
-        return redirect(url_for('auth.logout'))
-    return decorated_function
 
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -72,3 +65,59 @@ def logout():
     logout_user()
     flash('You have been successfully logged out.', 'success')
     return redirect(url_for('root.index'))
+
+
+@auth.route('/applicants', methods=['GET', 'POST'])
+@admin_required
+def applicants():
+    applicants = User.query.filter_by(join_date=None)
+    return render_template('applicants.html', applicants=applicants)
+
+
+@auth.route('/applicants/<applicant_id>', methods=['POST'])
+@admin_required
+def admissions(applicant_id):
+    applicant = User.query.filter_by(id=applicant_id).first()
+
+    if not applicant or applicant.is_active:
+        flash('This applicant does not exist.', 'error')
+        return redirect(url_for('auth.applicants'))
+
+    if 'decision' in request.form:
+        pass
+    elif 'confirmation' in request.form:
+        if request.form['confirmation'] == 'Accept':
+            applicant.join_date = datetime.utcnow()
+            db.session.commit()
+            flash(f"{applicant.full_name}'s account with {wbs.CAMPUS_CARD.formal_name} {applicant.username} has been verified.", 'success')
+        elif request.form['confirmation'] == 'Reject':
+            db.session.delete(applicant)
+            db.session.commit()
+            flash(f"{applicant.full_name}'s application with {wbs.CAMPUS_CARD.formal_name} {applicant.username} has been deleted.", 'success')
+
+        return redirect(url_for('auth.applicants'))
+    else:
+        flash('An unknown error has occurred', 'error')
+        return redirect(url_for('auth.applicants'))
+
+    return render_template('admissions.html', applicant=applicant)
+
+
+@auth.route('/users')
+@login_required
+def users():
+    active_users = User.query.filter(User.join_date != None)
+    teachers = active_users.filter(User.teacher != None)
+    students = active_users.filter(User.student != None)
+    return render_template('users.html', teachers=teachers, students=students)
+
+
+@auth.route('/users/<user_id>')
+@login_required
+def user_info(user_id):
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user:
+        abort(404)
+
+    return render_template('user.html', user=user)

@@ -8,7 +8,7 @@
     <section>
         <header><h2>{{ title }}</h2></header>
         {% call action_links('h3') %}
-            {{ nav_link(url_for(back_url or 'root.academics'), 'Go Back') }}
+            {{ nav_link(url_for(back_url or 'academics.index'), 'Go Back') }}
         {% endcall %}
         <section class="card">
             <header><h3>{{ card_title }}</h3></header>

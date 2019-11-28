@@ -1,0 +1,21 @@
+{% extends 'class-info.html' %}
+
+{% block title %}Enrollment - {{ super() }}{% endblock %}
+
+{% block subcontent %}
+    {% call action_links('h3', current_user.is_teacher) %}
+        {{ nav_link(url_for('classes.class_info', class_id=current_class.id), 'Hide Enrollment Panel') }}
+    {% endcall %}
+    <header><h4>Registration</h4></header>
+    <form class="inlined" action="" method="post">
+        <div>
+            {{ get_csrf_token() }}
+            {{ form.student.label }}
+            {{ form.student }}
+        </div>
+        <div>
+            <input type="submit" name="action" value="Enroll Student">
+            <input type="submit" name="action" value="Withdraw Student">
+        </div>
+    </form>
+{% endblock %}

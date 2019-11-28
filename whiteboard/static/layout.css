@@ -175,18 +175,18 @@ footer {
         background: linear-gradient(to right, var(--anchor-color) 25%, var(--main-bg-color) 25%);
     }
 
-    .actions {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
-
     .card .actions {
         padding: var(--thick);
     }
 
     .actions ul {
         margin: 0;
+    }
+
+    .float-top-right {
+        position: absolute;
+        top: 0;
+        right: 0;
     }
 }
 

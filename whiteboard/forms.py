@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, InputRequired, Length, Regexp, ValidationError
-from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from whiteboard.models import User, Student, Department, Term, Course
 from whiteboard import settings as wbs
+from whiteboard.models import Course, Department, Student, Term, User
 
 
 def student_query():

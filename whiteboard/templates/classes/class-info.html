@@ -15,35 +15,28 @@
         {{ print_class_info(current_class) }}
         <section>
             <header><h3>Students</h3></header>
-            {% if current_user.is_teacher %}
-                <section class="card">
-                    <header><h4>Registration</h4></header>
-                    <form class="inlined" action="" method="post">
-                        <div>
-                            {{ get_csrf_token() }}
-                            {{ form.student.label }}
-                            {{ form.student }}
-                        </div>
-                        <div>
-                            <input type="submit" name="action" value="Enroll Student">
-                            <input type="submit" name="action" value="Withdraw Student">
-                        </div>
-                    </form>
-                </section>
-            {% endif %}
+            {% block subcontent %}
+                {% call action_links('h4', current_user.is_teacher) %}
+                    {{ nav_link(url_for('classes.enrollment', class_id=current_class.id), 'Show Enrollment Panel') }}
+                {% endcall %}
+            {% endblock %}
             {% if students.count() > 0 %}
                 <ul class="users-list">
                     {% for student in students %}
+                        {# TODO
                         {% if current_class.teacher.user == current_user %}
                             {% call print_user(student.user) %}
-                                <form class="inlined" action="{{ url_for('admin.mark_attendance', class_id=current_class.id) }}" method="post">
+                                <form class="inlined" action="{{ url_for('classes.mark_attendance', class_id=current_class.id) }}" method="post">
                                     {{ get_csrf_token() }}
                                     <input type="submit" name="action" value="Mark Present">
                                 </form>
                             {% endcall %}
                         {% else %}
+                        #}
                             {{ print_user(student.user) }}
+                        {#
                         {% endif %}
+                        #}
                     {% endfor %}
                 </ul>
             {% else %}

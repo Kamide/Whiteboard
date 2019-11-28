@@ -8,15 +8,15 @@
     <section>
         <header><h2>Classes</h2></header>
         {% call action_links('h3', current_user.is_teacher) %}
-            {{ nav_link(url_for('admin.new_class'), 'Add New Class') }}
+            {{ nav_link(url_for('classes.new_class'), 'Add New Class') }}
         {% endcall %}
         {% if classes %}
             {% for class in classes %}
                 <section class="card">
-                    <header><h3><a href="{{ url_for('root.class_info', class_id=class.id) }}">{{ class }}</a></header></h3>
+                    <header><h3><a href="{{ url_for('classes.class_info', class_id=class.id) }}">{{ class }}</a></header></h3>
                     {{ print_class_info(class) }}
                     {% call action_links('h4', current_user.is_teacher) %}
-                        {{ nav_link(url_for('admin.edit_class', class_id=class.id), 'Edit') }}
+                        {{ nav_link(url_for('classes.edit_class', class_id=class.id), 'Edit') }}
                     {% endcall %}
                 </section>
             {% endfor %}
