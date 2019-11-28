@@ -1,11 +1,12 @@
 from datetime import datetime
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from whiteboard import settings as wbs
 from whiteboard.forms import LoginForm, RegistrationForm
 from whiteboard.models import Student, Teacher, User, db
 from whiteboard.views import admin_required, anonymous_required
+from whiteboard.views.exceptions import EntityNotFound
 
 auth = Blueprint('auth', __name__, template_folder='../templates/auth')
 
@@ -16,9 +17,9 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-        if User.query.filter_by(username=form.username.data).first():
+        if User.query.filter(User.username.ilike(form.username.data)).first():
             flash('This username is already in use.', 'error')
-        elif User.query.filter_by(email=form.email.data).first():
+        elif User.query.filter(User.email.ilike(form.email.data)).first():
             flash('This email is already in use.', 'error')
         else:
             new_user = User(username=form.username.data.upper(), password=generate_password_hash(form.password.data), full_name=form.full_name.data, display_name=form.display_name.data, email=form.email.data.lower())
@@ -80,8 +81,7 @@ def admissions(applicant_id):
     applicant = User.query.filter_by(id=applicant_id).first()
 
     if not applicant or applicant.is_active:
-        flash('This applicant does not exist.', 'error')
-        return redirect(url_for('auth.applicants'))
+        raise EntityNotFound(entity_name='Applicant', entity_id=applicant_id)
 
     if 'decision' in request.form:
         pass
@@ -118,6 +118,6 @@ def user_info(user_id):
     user = User.query.filter_by(id=user_id).first()
 
     if not user:
-        abort(404)
+        raise EntityNotFound(entity_name=User.__name__, entity_id=user_id)
 
     return render_template('user.html', user=user)

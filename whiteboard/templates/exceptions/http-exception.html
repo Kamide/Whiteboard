@@ -2,14 +2,14 @@
 
 {% from 'macros.html' import action_links with context %}
 
-{% block title %}{{ title }} - {{ super() }}{% endblock %}
+{% block title %}{{ status }} - {{ super() }}{% endblock %}
 
 {% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='errorpages.css') }}">{% endblock %}
 
 {% block content %}
     <section id="board">
-        <header><h2>{{ title }}</h2></header>
-        <p>{{ message }}</p>
+        <header><h2>{{ status }}</h2></header>
+        <p>{{ description }}</p>
         {% call action_links('h3', current_user.is_teacher, class='actions') %}
             {{ nav_link(url_for('root.index'), 'Return to Whiteboard') }}
         {% endcall %}

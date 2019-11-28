@@ -11,7 +11,7 @@ form:not(.inlined) input {
     margin: calc(var(--margin-minor) / 2) 0;
 }
 
-form:not(.inlined) input:not([type=checkbox]), form:not(.inlined) input:not([type=submit]) {
+form:not(.inlined) input:not([type=checkbox]) {
     display: block;
 }
 

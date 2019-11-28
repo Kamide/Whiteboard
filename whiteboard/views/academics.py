@@ -1,9 +1,9 @@
-
 from flask import Blueprint, flash, redirect, render_template, url_for
 from whiteboard import settings as wbs
 from whiteboard.forms import CourseForm, DepartmentForm, MajorForm, TermForm
 from whiteboard.models import Course, Department, Major, Term, db
 from whiteboard.views import admin_required
+from whiteboard.views.exceptions import EntityNotFound
 
 academics = Blueprint('academics', __name__, template_folder='../templates/academics', url_prefix='/academics')
 
@@ -44,8 +44,7 @@ def edit_department(department_id):
     department = Department.query.filter_by(id=department_id).first()
 
     if not department:
-        flash('This department does not exist.', 'error')
-        return redirect(url_for('academics.index'))
+        raise EntityNotFound(entity_name=Department.__name__, entity_id=department_id)
 
     form = DepartmentForm(obj=department)
 
@@ -89,8 +88,7 @@ def edit_major(major_id):
     major = Major.query.filter_by(id=major_id).first()
 
     if not major:
-        flash('This major does not exist.', 'error')
-        return redirect(url_for('academics.index'))
+        raise EntityNotFound(entity_name=Major.__name__, entity_id=major_id)
 
     form = MajorForm(obj=major)
 
@@ -138,8 +136,7 @@ def edit_course(course_id):
     course = Course.query.filter_by(id=course_id).first()
 
     if not course:
-        flash('This course does not exist.', 'error')
-        return redirect(url_for('academics.index'))
+        raise EntityNotFound(entity_name=Course.__name__, entity_id=course_id)
 
     form = CourseForm(obj=course)
 
@@ -183,8 +180,7 @@ def edit_term(term_id):
     term = Term.query.filter_by(id=term_id).first()
 
     if not term:
-        flash(f'This {wbs.ACADEMIC_TERM.system} does not exist.', 'error')
-        return redirect(url_for('academics.index'))
+        raise EntityNotFound(entity_name=wbs.ACADEMIC_TERM.system_capital, entity_id=term_id)
 
     form = TermForm(obj=term)
 

@@ -4,6 +4,7 @@ from whiteboard import settings as wbs
 from whiteboard.forms import ClassForm, EnrollmentForm
 from whiteboard.models import Class, Course, Enrollment, Student, Term, db
 from whiteboard.views import admin_required
+from whiteboard.views.exceptions import EntityNotFound
 
 classes = Blueprint('classes', __name__, template_folder='../templates/classes', url_prefix='/classes')
 
@@ -55,8 +56,7 @@ def edit_class(class_id):
     class_ = Class.query.filter_by(id=class_id).first()
 
     if not class_:
-        flash('This class does not exist.', 'error')
-        return redirect(url_for('classes.index'))
+        raise EntityNotFound(entity_name=Class.__name__, entity_id=class_id)
 
     if class_.teacher.user != current_user:
         flash("You do not have permission to change another instructor's class.", 'error')
@@ -83,8 +83,7 @@ def class_info(class_id):
     current_class = Class.query.filter_by(id=class_id).first()
 
     if not current_class:
-        flash('This class does not exist!', 'error')
-        return redirect(url_for('classes.index'))
+        raise EntityNotFound(entity_name=Class.__name__, entity_id=class_id)
 
     students = Student.query.join(Enrollment).filter_by(class_id=class_id)
     return render_template('class-info.html', current_class=current_class, students=students)
@@ -122,7 +121,7 @@ def enrollment(class_id):
                 else:
                     flash("You cannot withdraw a student that has not been enrolled.")
         else:
-            flash('This student does not exist!', 'error')
+            abort(400)
 
     return render_template('enrollment.html', current_class=current_class, students=students, form=form)
 
