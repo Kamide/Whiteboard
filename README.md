@@ -6,6 +6,7 @@
 
 - Python >= 3.6
 - Flask >= 1.1.1
+- Flask-Migrate >= 2.5.2
 - Flask-Login >= 0.4.1
 - Flask-SQLAlchemy >= 2.4.0
 - Flask-WTF >= 0.14.2
@@ -21,6 +22,27 @@ flask run
 ```
 
 On Windows, use `set` instead of `export`.
+
+To create a new superuser, run the command:
+
+```bash
+python createsuperuser.py
+```
+
+## Migrations
+
+Whenever the database models are changed, run the following commands:
+
+```bash
+flask db migrate
+flask db upgrade
+```
+
+For more information, run the command:
+
+```bash
+flask db --help
+```
 
 ## Team
 

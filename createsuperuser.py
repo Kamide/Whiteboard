@@ -1,7 +1,7 @@
 import sqlite3
+from datetime import datetime
 from getpass import getpass
 from re import match
-from datetime import datetime
 from werkzeug.security import generate_password_hash
 from whiteboard.settings import CAMPUS_CARD
 
@@ -45,7 +45,7 @@ while True:
     else:
         break
 
-conn = sqlite3.connect('whiteboard/development.db')
+conn = sqlite3.connect('development.db')
 c = conn.cursor()
 c.execute('INSERT INTO Users (username, password, full_name, display_name, email, join_date) VALUES (?,?,?,?,?,?)', (username.upper(), generate_password_hash(password), full_name, display_name, email.lower(), datetime.utcnow()))
 user_id = c.lastrowid

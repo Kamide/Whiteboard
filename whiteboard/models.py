@@ -1,8 +1,10 @@
 from flask_login import LoginManager, UserMixin
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from whiteboard import settings as wbs
 
 db = SQLAlchemy()
+migrate = Migrate()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 
@@ -60,6 +62,7 @@ class Student(db.Model):
     major_id = db.Column(db.Integer, db.ForeignKey('Majors.id', ondelete='SET NULL'))
 
     enrollments = db.relationship('Enrollment', backref='student', cascade='all, delete')
+    attendance = db.relationship('Attendance', backref='student', cascade='all, delete')
 
     def __str__(self):
         return str(self.user)
@@ -131,6 +134,7 @@ class Class(db.Model):
     location = db.Column(db.String(255), nullable=False)
 
     enrollments = db.relationship('Enrollment', backref='class_', cascade='all, delete')
+    attendance = db.relationship('Attendance', backref='class_', cascade='all, delete')
     __table_args__ = (db.UniqueConstraint('term_id', 'course_id', 'section'), )
 
     def __str__(self):
@@ -139,8 +143,22 @@ class Class(db.Model):
 
 class Enrollment(db.Model):
     __tablename__ = 'Enrollments'
-    student_id = db.Column(db.Integer, db.ForeignKey('Students.user_id', ondelete='CASCADE'), primary_key=True)
-    class_id = db.Column(db.Integer, db.ForeignKey('Classes.id', ondelete='CASCADE'), primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.user_id', ondelete='CASCADE'))
+    class_id = db.Column(db.Integer, db.ForeignKey('Classes.id', ondelete='CASCADE'))
+
+    __table_args__ = (db.PrimaryKeyConstraint('student_id', 'class_id'), )
 
     def __str__(self):
-        return f'{self.student}—{self.class_}'
+        return f'{self.student} — {self.class_}'
+
+
+class Attendance(db.Model):
+    __tablename__ = 'Attendance'
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.user_id', ondelete='CASCADE'), primary_key=True)
+    class_id = db.Column(db.Integer, db.ForeignKey('Classes.id', ondelete='CASCADE'), primary_key=True)
+    date = db.Column(db.Date(), primary_key=True)
+
+    __table_args__ = (db.PrimaryKeyConstraint('student_id', 'class_id', 'date'), )
+
+    def __str__(self):
+        return f'{self.student} — {self.class_} — {self.date}'

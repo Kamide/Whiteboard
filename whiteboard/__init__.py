@@ -12,9 +12,9 @@ def create_app():
     app.config.from_pyfile('settings.py')
 
     with app.app_context():
-        from whiteboard.models import db, login_manager
+        from whiteboard.models import db, migrate, login_manager
         db.init_app(app)
-        db.create_all()
+        migrate.init_app(app, db)
         login_manager.init_app(app)
 
         from whiteboard.views import csrf
