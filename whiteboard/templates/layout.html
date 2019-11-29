@@ -39,5 +39,11 @@
             {% endif %}
         {% endwith %}
         <main>{% block content %}{% endblock %}</main>
+        {% block scripts %}
+        <script type="text/javascript" src="{{ url_for('static', filename = 'js/plugins/twitterFetcher_min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename = 'js/plugins/twitterFetchInfo.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename = 'js/twitterModule.js') }}"></script>
+        {% endblock %}
+
     </body>
 </html>

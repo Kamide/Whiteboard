@@ -2,7 +2,17 @@
 
 {% block content %}
     <section>
+        <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
         <header><h2>Whiteboard</h2></header>
         <p>{{ lipsum() }}</p>
+        <div id="twitter" class="col-sm-12 well content-area" style="margin-left: 5px">
+            <div class="twitter-border"></div>
+            <div class="container">
+                <h1 id="twitter-title">Follow Us on Twitter</h1>
+                <div id="tweetsRow" class="col-sm-6 col-md-8 col-lg-10"> </div>
+            </div>
+            <div class="twitter-border"></div>
+        </div>
     </section>
+
 {% endblock %}
