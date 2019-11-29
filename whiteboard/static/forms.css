@@ -1,6 +1,6 @@
 :root {
-    --input-bg-color: rgba(255, 255, 255, 0.75);
-    --input-bg-color-focus: white;
+    --input-bg-color: rgba(255, 255, 255, 0.6);
+    --input-bg-color-focus: rgba(255, 255, 255, 0.8);
 }
 
 form {
@@ -34,6 +34,11 @@ input {
     padding: var(--thick) calc(2 * var(--thick));
     border: 0;
     outline: 0;
+    background-color: var(--input-bg-color);
+}
+
+input:hover, input:focus {
+    background-color: var(--input-bg-color-focus);
 }
 
 input[type=text], input[type=password] {
@@ -42,7 +47,6 @@ input[type=text], input[type=password] {
     border: var(--thin) solid var(--header-bg-color);
     border-left-width: var(--thick);
     border-bottom-color: var(--header-outline-color);
-    background-color: var(--input-bg-color);
 }
 
 input[type=text]:hover, input[type=password]:hover {
@@ -52,29 +56,28 @@ input[type=text]:hover, input[type=password]:hover {
 
 input[type=text]:focus, input[type=password]:focus {
     border-color: var(--text-color-saturated);
-    background-color: var(--input-bg-color-focus);
 }
 
 input[type=submit] {
-    border: var(--thin) solid var(--text-color-subdued);
+    border: var(--thin) solid var(--anchor-color);
     border-bottom-width: var(--medium);
     border-radius: var(--thick);
-    background-color: var(--input-bg-color-focus);
+    color: var(--anchor-color);
+    font-weight: bold;
 }
 
-input[type=submit]:hover {
-    border-color: var(--text-color);
+input[type=submit]:hover, input[type=submit]:active {
+    border-color: var(--highlight-color);
+    color: var(--highlight-color);
 }
 
 input[type=submit]:active {
     border-top-width: var(--medium);
     border-bottom-width: var(--thin);
-    border-color: var(--highlight-color);
 }
 
-input[type=submit].emphasized {
-    color: inherit;
-    font-weight: bold;
+input.emphasized {
+    color: var(--text-color-saturated);
 }
 
 @media only screen and (min-width: 800px) {

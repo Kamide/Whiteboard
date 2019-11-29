@@ -7,3 +7,5 @@ ACADEMIC_TERM = AcademicTerm('semester', 'semesters', 'season', 'seasons')
 DEPT_ABBREV_LEN = 5
 COURSE_CODE_LEN = 5
 CLASS_SECTION_LEN = 4
+
+TWITTER_SCREEN_NAME = 'CityCollegeNY'

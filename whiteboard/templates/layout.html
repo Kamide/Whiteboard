@@ -8,10 +8,11 @@
         <title>{% block title %}Whiteboard{% endblock %}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='layout.css') }}">
         {% block style %}{% endblock %}
+        {% block script %}{% endblock %}
         <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
         <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     </head>
-    <body>
+    <body {% block body_attributes %}{% endblock %}>
         <header class="masthead">
             <nav class="masthead">
                 <header><h1><a {% if request.endpoint == 'root.index' %}class="active-page"{% endif %} href="{{ url_for('root.index') }}" title="Home Page">Whiteboard</a></h1></header>
@@ -39,11 +40,5 @@
             {% endif %}
         {% endwith %}
         <main>{% block content %}{% endblock %}</main>
-        {% block scripts %}
-        <script type="text/javascript" src="{{ url_for('static', filename = 'js/plugins/twitterFetcher_min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename = 'js/plugins/twitterFetchInfo.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename = 'js/twitterModule.js') }}"></script>
-        {% endblock %}
-
     </body>
 </html>

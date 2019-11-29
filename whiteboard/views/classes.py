@@ -1,8 +1,9 @@
+from datetime import datetime
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from whiteboard import settings as wbs
 from whiteboard.forms import ClassForm, EnrollmentForm
-from whiteboard.models import Class, Course, Enrollment, Student, Term, db
+from whiteboard.models import Attendance, Class, Course, Enrollment, Student, Term, db
 from whiteboard.views import admin_required
 from whiteboard.views.exceptions import EntityNotFound
 
@@ -86,7 +87,9 @@ def class_info(class_id):
         raise EntityNotFound(entity_name=Class.__name__, entity_id=class_id)
 
     students = Student.query.join(Enrollment).filter_by(class_id=class_id)
-    return render_template('class-info.html', current_class=current_class, students=students)
+    today = datetime.utcnow().date()
+
+    return render_template('class-info.html', current_class=current_class, students=students, today=today)
 
 
 @classes.route('/<class_id>/enrollment', methods=['GET', 'POST'])
@@ -103,10 +106,10 @@ def enrollment(class_id):
         student = Student.query.filter_by(user_id=form.student.data.user_id).first()
 
         if student:
-            student_enrolled = Enrollment.query.filter_by(student_id=student.user.id, class_id=class_id).first()
+            student_enrollment = Enrollment.query.filter_by(student_id=student.user.id, class_id=class_id).first()
 
             if request.form['action'] == 'Enroll Student':
-                if student_enrolled:
+                if student_enrollment:
                     flash('This student is already enrolled in this class.')
                 else:
                     enrollment = Enrollment(student_id=student.user.id, class_id=class_id)
@@ -114,8 +117,8 @@ def enrollment(class_id):
                     db.session.commit()
                     flash(f'{student} has been enrolled in this class.', 'success')
             else:
-                if student_enrolled:
-                    db.session.delete(student_enrolled)
+                if student_enrollment:
+                    db.session.delete(student_enrollment)
                     db.session.commit()
                     flash(f'{student} has been withdrawn from the class.', 'success')
                 else:
@@ -126,9 +129,46 @@ def enrollment(class_id):
     return render_template('enrollment.html', current_class=current_class, students=students, form=form)
 
 
-@classes.route('/<class_id>/attendance/', methods=['POST'])
+def validate_student(class_id, student_id):
+    student_enrollment = Enrollment.query.filter_by(student_id=student_id, class_id=class_id).first()
+
+    if not student_enrollment:
+        abort(400)
+
+    if student_enrollment.class_.teacher.user != current_user:
+        abort(403)
+
+    student_attendance = Attendance.query.filter_by(student_id=student_id, class_id=class_id, date=datetime.utcnow().date()).first()
+
+    return student_enrollment, student_attendance
+
+
+@classes.route('/<class_id>/attendance/mark-present/<student_id>', methods=['POST'])
 @admin_required
-def mark_attendance(class_id):
-    # TODO
-    flash('Marked as present.', 'success')
+def mark_present(class_id, student_id):
+    student_enrollment, student_attendance = validate_student(class_id, student_id)
+
+    if student_attendance:
+        flash(f'{student_enrollment.student} has already been marked present.')
+    else:
+        attendance = Attendance(student_id=student_id, class_id=class_id, date=datetime.utcnow().date())
+        db.session.add(attendance)
+        db.session.commit()
+        flash(f'{student_enrollment.student} has been marked present.', 'success')
+
+    return redirect(url_for('classes.class_info', class_id=class_id))
+
+
+@classes.route('/<class_id>/attendance/mark-absent/<student_id>', methods=['POST'])
+@admin_required
+def mark_absent(class_id, student_id):
+    student_enrollment, student_attendance = validate_student(class_id, student_id)
+
+    if student_attendance:
+        db.session.delete(student_attendance)
+        db.session.commit()
+        flash(f'{student_enrollment.student} has been marked absent.', 'success')
+    else:
+        flash(f'{student_enrollment.student} has already been marked absent.')
+
     return redirect(url_for('classes.class_info', class_id=class_id))

@@ -18,16 +18,18 @@
     {% endif %}
 {% endmacro %}
 
-{% macro action_links(heading_level, print_condition=True, class='actions float-top-right') %}
+{% macro action_links(heading_level, print_condition=True, class='actions float-top-right', header='Actions', use_list=True) %}
     {% if print_condition %}
-        {% if not admin_only or (admin_only and current_user.is_teacher) %}
-            <nav {% if class %}class="{{ class }}"{% endif %}>
-                <header><{{ heading_level }}>Actions</{{ heading_level }}></header>
+        <nav {% if class %}class="{{ class }}"{% endif %}>
+            <header><{{ heading_level }}>{{ header }}</{{ heading_level }}></header>
+            {% if use_list %}
                 <ul>
                     {{ caller() }}
                 </ul>
-            </nav>
-        {% endif %}
+            {% else %}
+                {{ caller() }}
+            {% endif %}
+        </nav>
     {% endif %}
 {% endmacro %}
 

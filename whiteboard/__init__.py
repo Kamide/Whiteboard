@@ -1,9 +1,11 @@
 from os import environ
+from re import match
 from flask import Flask
 from whiteboard import settings as wbs
 
 assert isinstance(wbs.CAMPUS_CARD, wbs.CampusCard) and isinstance(wbs.ACADEMIC_TERM, wbs.AcademicTerm)
 assert wbs.DEPT_ABBREV_LEN > 0 and wbs.COURSE_CODE_LEN > 0 and wbs.CLASS_SECTION_LEN > 0
+assert match('^[A-Za-z0-9_]{1,15}$', wbs.TWITTER_SCREEN_NAME)
 
 
 def create_app():

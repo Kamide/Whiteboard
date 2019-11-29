@@ -67,6 +67,9 @@ class Student(db.Model):
     def __str__(self):
         return str(self.user)
 
+    def present(self, class_id, date):
+        return Attendance.query.filter_by(student_id=self.user_id, class_id=class_id, date=date).first()
+
 
 class Department(db.Model):
     __tablename__ = 'Departments'
