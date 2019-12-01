@@ -16,7 +16,8 @@ def create_app():
     with app.app_context():
         from whiteboard.models import db, migrate, login_manager
         db.init_app(app)
-        migrate.init_app(app, db)
+        # db.create_all()
+        migrate.init_app(app, db, render_as_batch=True)
         login_manager.init_app(app)
 
         from whiteboard.views import csrf

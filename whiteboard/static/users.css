@@ -22,3 +22,7 @@
 .users-list form {
     margin: 0;
 }
+
+.absent {
+    border-color: var(--error-color);
+}

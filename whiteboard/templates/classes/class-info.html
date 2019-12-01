@@ -23,14 +23,14 @@
             {% if students.count() > 0 %}
                 <ul class="users-list">
                     {% for student in students %}
-                        {% if current_class.teacher.user == current_user and today %}
-                            {% call print_user(student.user) %}
+                        {% if current_class.teacher.user == current_user %}
+                            {% call print_user(student.user, class='absent' if student.absent(current_class.id, today) else '') %}
                                 <form class="inlined" method="post">
                                     {{ get_csrf_token() }}
-                                    {% if student.present(current_class.id, today) %}
-                                        <input type="submit" name="action" value="Mark Absent" formaction="{{ url_for('classes.mark_absent', class_id=current_class.id, student_id=student.user_id) }}">
+                                    {% if student.absent(current_class.id, today) %}
+                                        <input type="submit" name="action" value="Remove Absence" formaction="{{ url_for('classes.remove_absence', class_id=current_class.id, student_id=student.user_id) }}">
                                     {% else %}
-                                        <input type="submit" name="action" value="Mark Present" formaction="{{ url_for('classes.mark_present', class_id=current_class.id, student_id=student.user_id) }}">
+                                        <input type="submit" name="action" value="Mark Absent" formaction="{{ url_for('classes.mark_absent', class_id=current_class.id, student_id=student.user_id) }}">
                                     {% endif %}
                                 </form>
                             {% endcall %}

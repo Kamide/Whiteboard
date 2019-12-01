@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from whiteboard import settings as wbs
 
 db = SQLAlchemy()
-migrate = Migrate()
+migrate = Migrate(compare_type=True)
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 
@@ -62,13 +62,13 @@ class Student(db.Model):
     major_id = db.Column(db.Integer, db.ForeignKey('Majors.id', ondelete='SET NULL'))
 
     enrollments = db.relationship('Enrollment', backref='student', cascade='all, delete')
-    attendance = db.relationship('Attendance', backref='student', cascade='all, delete')
+    absences = db.relationship('Absence', backref='student', cascade='all, delete')
 
     def __str__(self):
         return str(self.user)
 
-    def present(self, class_id, date):
-        return Attendance.query.filter_by(student_id=self.user_id, class_id=class_id, date=date).first()
+    def absent(self, class_id, date):
+        return Absence.query.filter_by(student_id=self.user_id, class_id=class_id, date=date).first()
 
 
 class Department(db.Model):
@@ -137,7 +137,7 @@ class Class(db.Model):
     location = db.Column(db.String(255), nullable=False)
 
     enrollments = db.relationship('Enrollment', backref='class_', cascade='all, delete')
-    attendance = db.relationship('Attendance', backref='class_', cascade='all, delete')
+    absences = db.relationship('Absence', backref='class_', cascade='all, delete')
     __table_args__ = (db.UniqueConstraint('term_id', 'course_id', 'section'), )
 
     def __str__(self):
@@ -155,8 +155,8 @@ class Enrollment(db.Model):
         return f'{self.student} — {self.class_}'
 
 
-class Attendance(db.Model):
-    __tablename__ = 'Attendance'
+class Absence(db.Model):
+    __tablename__ = 'Absences'
     student_id = db.Column(db.Integer, db.ForeignKey('Students.user_id', ondelete='CASCADE'), primary_key=True)
     class_id = db.Column(db.Integer, db.ForeignKey('Classes.id', ondelete='CASCADE'), primary_key=True)
     date = db.Column(db.Date(), primary_key=True)
@@ -165,3 +165,8 @@ class Attendance(db.Model):
 
     def __str__(self):
         return f'{self.student} — {self.class_} — {self.date}'
+
+
+# class Tester(db.Model):
+#     __tablename__ = 'Tester'
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -1,8 +1,10 @@
-import sqlite3
 from datetime import datetime
 from getpass import getpass
 from re import match
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
+from whiteboard import create_app
+from whiteboard.models import Teacher, User
 from whiteboard.settings import CAMPUS_CARD
 
 while True:
@@ -45,12 +47,13 @@ while True:
     else:
         break
 
-conn = sqlite3.connect('development.db')
-c = conn.cursor()
-c.execute('INSERT INTO Users (username, password, full_name, display_name, email, join_date) VALUES (?,?,?,?,?,?)', (username.upper(), generate_password_hash(password), full_name, display_name, email.lower(), datetime.utcnow()))
-user_id = c.lastrowid
-conn.commit()
-c.execute(f'INSERT INTO Teachers (user_id) VALUES ({user_id})')
-conn.commit()
-c.close()
-conn.close()
+app = create_app()
+db = SQLAlchemy(app)
+
+new_user = User(username=username.upper(), password=generate_password_hash(password), full_name=full_name, display_name=display_name, email=email.lower(), join_date=datetime.utcnow())
+db.session.add(new_user)
+db.session.flush()
+
+new_teacher = Teacher(user_id=new_user.id)
+db.session.add(new_teacher)
+db.session.commit()
