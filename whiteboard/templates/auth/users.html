@@ -10,18 +10,18 @@
     <section>
         <header><h2>Teachers</h2></header>
         {# There is no need to check if `teachers` is empty because, if this page is being viewed, there is at least one teacher. #}
-        <ul class="users-list">
+        <ul class="user-list">
             {% for teacher in teachers %}
-                {{ print_user(teacher) }}
+                {{ print_user(teacher, class='current-user' if teacher == current_user else '') }}
             {% endfor %}
         </ul>
     </section>
     <section>
         <header><h2>Students</h2></header>
         {% if students.count() > 0 %}
-            <ul class="users-list">
+            <ul class="user-list">
                 {% for student in students %}
-                    {{ print_user(student) }}
+                    {{ print_user(student, class='current-user' if student == current_user else '') }}
                 {% endfor %}
             </ul>
         {% else %}

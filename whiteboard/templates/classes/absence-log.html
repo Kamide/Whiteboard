@@ -1,0 +1,39 @@
+{% extends 'class-info.html' %}
+
+{% block title %}Absence Log - {{ super() }}{% endblock %}
+
+{% block absence_toggler %}
+    {{ nav_link(url_for('classes.class_info', class_id=current_class.id), 'Hide Absence Log') }}
+{% endblock %}
+
+{% block subcontent %}
+    <section>
+        <header><h4>Absence Log</h4></header>
+        {% if absences %}
+            {% set ns = namespace(prev_date=none) %}
+            {% for absence in absences %}
+                {% if ns.prev_date is none or absence.date != ns.prev_date%}
+                    {% if ns.prev_date is not none %}
+                        </ul>
+                    </section>
+                    {% endif %}
+                    <section>
+                        <header><h5>{{ absence.date }}</h5></header>
+                        <ul class="user-list">
+                            {# Closing tags above #}
+                {% endif %}
+                {% call print_user(absence.student.user) %}
+                    <ul>
+                        <li class="emphasized">{{ absence.student.absences|length }} Absence(s) in Total</li>
+                    </ul>
+                {% endcall %}
+                {% set ns.prev_date = absence.date %}
+            {% endfor %}
+                            {# Closing tags for last absence in absences #}
+                        </ul>
+                    </section>
+        {% else %}
+            <p class="emphasized"><em>No student was absent so far.</em></p>
+        {% endif %}
+    </section>
+{% endblock %}

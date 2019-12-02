@@ -12,7 +12,7 @@
     --header-bg-color: hsl(138, 25%, 90%);
     --header-outline-color: hsl(168, 25%, 60%);
     --card-bg-color: rgba(255, 255, 255, 0.5);
-    --card-shadow-color: rgba(0, 0, 0, 0.1);
+    --card-outline-color: rgba(0, 0, 0, 0.1);
 
     --anchor-color: hsl(282, 50%, 50%);
     --highlight-color: hsl(192, 50%, 50%);
@@ -20,7 +20,7 @@
     --error-color: hsl(342, 100%, 42%);
 }
 
-html, body, h2, h3, h4, p, ul, header.masthead *, .messages.masthead ul {
+html, body, h2, h3, h4, h5, h6, p, ul, header.masthead *, .messages.masthead ul {
     margin: 0;
     padding: 0;
     border: 0;
@@ -33,8 +33,28 @@ body {
     line-height: 1.5;
 }
 
-h2, h3, h4, p, ul, .card {
+h2, h3, h4, h5, h6, p, ul, .card {
     margin: var(--margin-minor) 0;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.375em;
+}
+
+h4 {
+    font-size: 1.25em;
+}
+
+h5 {
+    font-size: 1.125em;
+}
+
+h6 {
+    font-size: 1em;
 }
 
 ul {
@@ -134,10 +154,10 @@ footer {
 }
 
 .card, .actions li, #tweets li, .interact a, button {
-    border: var(--thin) solid var(--card-shadow-color);
+    border: var(--thin) solid var(--card-outline-color);
     border-radius: var(--thick);
     background-color: var(--card-bg-color);
-    box-shadow: 0 var(--thin) var(--thin) var(--card-shadow-color);
+    box-shadow: 0 var(--thin) var(--thin) var(--card-outline-color);
 }
 
 .actions li, .actions a, .interact a, button {
@@ -164,11 +184,20 @@ button:active {
 }
 
 button:disabled {
-    background-color: var(--card-shadow-color);
+    background-color: var(--card-outline-color);
 }
 
 .emphasized {
     color: var(--text-color-saturated);
+}
+
+.card.emphasized {
+    border-color: var(--header-outline-color);
+    color: inherit;
+}
+
+.card.alert {
+    border-color: var(--error-color);
 }
 
 @media only screen and (min-width: 800px) {

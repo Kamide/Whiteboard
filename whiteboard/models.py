@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_login import LoginManager, UserMixin
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -36,6 +37,10 @@ class User(db.Model, UserMixin):
         return self.teacher is not None
 
     @property
+    def is_student(self):
+        return self.student is not None
+
+    @property
     def identity(self):
         return 'Teacher' if self.is_teacher else 'Student'
 
@@ -67,7 +72,7 @@ class Student(db.Model):
     def __str__(self):
         return str(self.user)
 
-    def absent(self, class_id, date):
+    def absent(self, class_id, date=datetime.utcnow().date()):
         return Absence.query.filter_by(student_id=self.user_id, class_id=class_id, date=date).first()
 
 
@@ -143,6 +148,15 @@ class Class(db.Model):
     def __str__(self):
         return f'{self.term} {self.course}-{self.section}'
 
+    def has_student(self, user):
+        return Enrollment.query.filter_by(student_id=user.id, class_id=self.id).first()
+
+    def has_user(self, user):
+        if user.is_teacher:
+            return self.teacher_id == user.id
+        else:
+            return self.has_student(user)
+
 
 class Enrollment(db.Model):
     __tablename__ = 'Enrollments'
@@ -152,7 +166,7 @@ class Enrollment(db.Model):
     __table_args__ = (db.PrimaryKeyConstraint('student_id', 'class_id'), )
 
     def __str__(self):
-        return f'{self.student} — {self.class_}'
+        return f'{self.class_}—{self.student}'
 
 
 class Absence(db.Model):
@@ -164,9 +178,4 @@ class Absence(db.Model):
     __table_args__ = (db.PrimaryKeyConstraint('student_id', 'class_id', 'date'), )
 
     def __str__(self):
-        return f'{self.student} — {self.class_} — {self.date}'
-
-
-# class Tester(db.Model):
-#     __tablename__ = 'Tester'
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+        return f'{self.class_}—{self.student}: Absent on {self.date}'

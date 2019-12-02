@@ -1,26 +1,30 @@
-
-.users-list {
+.user-list {
     margin-left: 0;
 }
 
-.users-list ul {
+.user-list ul {
     position: relative;
     margin: 0;
+    list-style: none;
 }
 
-.users-list > li {
+.user-list > li {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.users-list > li > a {
+.user-list > li > a {
     flex: 1;
     padding: var(--margin-minor) 0;
 }
 
-.users-list form {
+.user-list form {
     margin: 0;
+}
+
+.current-user {
+    border-color: var(--header-outline-color);
 }
 
 .absent {

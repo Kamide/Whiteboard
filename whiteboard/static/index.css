@@ -32,7 +32,7 @@
     display: flex;
     align-items: center;
     padding-bottom: calc(var(--margin-minor) / 4);
-    border-bottom: var(--thin) solid var(--card-shadow-color);
+    border-bottom: var(--thin) solid var(--card-outline-color);
 }
 
 .user img, .user div {
@@ -41,7 +41,7 @@
 
 .user img, .media img {
     border-radius: var(--thick);
-    border: var(--thin) solid var(--card-shadow-color);
+    border: var(--thin) solid var(--card-outline-color);
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -66,7 +66,7 @@
 
 .media {
     padding-top: calc(var(--margin-minor) / 4);
-    border-top: var(--thin) solid var(--card-shadow-color);
+    border-top: var(--thin) solid var(--card-outline-color);
 }
 
 .media img {

@@ -15,33 +15,46 @@
         {{ print_class_info(current_class) }}
         <section>
             <header><h3>Students</h3></header>
-            {% block subcontent %}
-                {% call action_links('h4', current_user.is_teacher) %}
-                    {{ nav_link(url_for('classes.enrollment', class_id=current_class.id), 'Show Enrollment Panel') }}
+            {% block actions %}
+                {% call action_links('h4', ) %}
+                    {% block enrollment_toggler %}
+                        {{ nav_link(url_for('classes.enrollment', class_id=current_class.id), 'Show Enrollment Panel', current_class.teacher == current_user.teacher) }}
+                    {% endblock %}
+                    {% block absence_toggler %}
+                        {# Do not show absence log to users not enrolled in or teaching the class. #}
+                        {{ nav_link(url_for('classes.absence_log', class_id=current_class.id), 'View Absence Log', current_class.has_user(current_user)) }}
+                    {% endblock %}
                 {% endcall %}
             {% endblock %}
-            {% if students.count() > 0 %}
-                <ul class="users-list">
-                    {% for student in students %}
-                        {% if current_class.teacher.user == current_user %}
-                            {% call print_user(student.user, class='absent' if student.absent(current_class.id, today) else '') %}
-                                <form class="inlined" method="post">
-                                    {{ get_csrf_token() }}
-                                    {% if student.absent(current_class.id, today) %}
-                                        <input type="submit" name="action" value="Remove Absence" formaction="{{ url_for('classes.remove_absence', class_id=current_class.id, student_id=student.user_id) }}">
-                                    {% else %}
-                                        <input type="submit" name="action" value="Mark Absent" formaction="{{ url_for('classes.mark_absent', class_id=current_class.id, student_id=student.user_id) }}">
-                                    {% endif %}
-                                </form>
-                            {% endcall %}
-                        {% else %}
-                            {{ print_user(student.user) }}
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="emphasized"><em>No students enrolled.</em></p>
-            {% endif %}
+            {% block subcontent %}
+                {% if students.count() > 0 %}
+                    <ul class="user-list">
+                        {% for student in students %}
+                            {% if current_class.has_user(current_user) and student.absent(current_class.id) %}
+                                {% set print_user_class = 'absent' %}
+                            {% else %}
+                                {% set print_user_class = '' %}
+                            {% endif %}
+                            {% if current_class.teacher.user == current_user %}
+                                {% call print_user(student.user, class=print_user_class) %}
+                                    <form class="inlined" method="post">
+                                        {{ get_csrf_token() }}
+                                        {% if student.absent(current_class.id) %}
+                                            <input type="submit" name="action" value="Remove Absence" formaction="{{ url_for('classes.remove_absence', class_id=current_class.id, student_id=student.user_id) }}">
+                                        {% else %}
+                                            <input type="submit" name="action" value="Mark Absent" formaction="{{ url_for('classes.mark_absent', class_id=current_class.id, student_id=student.user_id) }}">
+                                        {% endif %}
+                                    </form>
+                                {% endcall %}
+                            {% else %}
+                                {{ print_user(student.user, class=print_user_class) }}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="emphasized"><em>No students enrolled.</em></p>
+                {% endif %}
+            {% endblock %}
         </section>
     </section>
 {% endblock %}

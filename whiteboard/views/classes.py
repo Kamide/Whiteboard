@@ -10,6 +10,35 @@ from whiteboard.views.exceptions import EntityNotFound
 classes = Blueprint('classes', __name__, template_folder='../templates/classes', url_prefix='/classes')
 
 
+def verify_class_exists(class_id):
+    current_class = Class.query.filter_by(id=class_id).first()
+
+    if not current_class:
+        raise EntityNotFound(entity_name=Class.__name__, entity_id=class_id)
+
+    return current_class
+
+
+def verify_user_teaches_class(class_id):
+    current_class = verify_class_exists(class_id)
+
+    if current_class.teacher.user != current_user:
+        abort(403, "You do not have permission to change another instructor's class.")
+
+    return current_class
+
+
+def get_student_info(class_id, student_id):
+    verify_user_teaches_class(class_id)
+    student_enrollment = Enrollment.query.filter_by(student_id=student_id, class_id=class_id).first()
+
+    if not student_enrollment:
+        abort(400)
+
+    student_absence = Absence.query.filter_by(student_id=student_id, class_id=class_id, date=datetime.utcnow().date()).first()
+    return student_enrollment, student_absence
+
+
 @classes.route('/')
 @login_required
 def index():
@@ -54,15 +83,7 @@ def new_class():
 @classes.route('/edit/<class_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_class(class_id):
-    class_ = Class.query.filter_by(id=class_id).first()
-
-    if not class_:
-        raise EntityNotFound(entity_name=Class.__name__, entity_id=class_id)
-
-    if class_.teacher.user != current_user:
-        flash("You do not have permission to change another instructor's class.", 'error')
-        return redirect(url_for('classes.index'))
-
+    class_ = verify_user_teaches_class(class_id)
     form = ClassForm(obj=class_)
 
     if form.validate_on_submit():
@@ -81,23 +102,16 @@ def edit_class(class_id):
 @classes.route('/<class_id>', methods=['GET', 'POST'])
 @login_required
 def class_info(class_id):
-    current_class = Class.query.filter_by(id=class_id).first()
-
-    if not current_class:
-        raise EntityNotFound(entity_name=Class.__name__, entity_id=class_id)
-
+    current_class = verify_class_exists(class_id)
     students = Student.query.join(Enrollment).filter_by(class_id=class_id)
-    today = datetime.utcnow().date()
-
-    return render_template('class-info.html', current_class=current_class, students=students, today=today)
+    return render_template('class-info.html', current_class=current_class, students=students)
 
 
 @classes.route('/<class_id>/enrollment', methods=['GET', 'POST'])
 @admin_required
 def enrollment(class_id):
-    current_class = Class.query.filter_by(id=class_id).first()
+    current_class = verify_user_teaches_class(class_id)
     students = Student.query.join(Enrollment).filter_by(class_id=class_id)
-    today = datetime.utcnow().date()
     form = EnrollmentForm()
 
     if form.validate_on_submit():
@@ -127,43 +141,29 @@ def enrollment(class_id):
         else:
             abort(400)
 
-    return render_template('enrollment.html', current_class=current_class, students=students, today=today, form=form)
+    return render_template('enrollment.html', current_class=current_class, students=students, form=form)
 
 
-def validate_student(class_id, student_id):
-    student_enrollment = Enrollment.query.filter_by(student_id=student_id, class_id=class_id).first()
-
-    if not student_enrollment:
-        abort(400)
-
-    if student_enrollment.class_.teacher.user != current_user:
-        abort(403)
-
-    student_absence = Absence.query.filter_by(student_id=student_id, class_id=class_id, date=datetime.utcnow().date()).first()
-
-    return student_enrollment, student_absence
-
-
-@classes.route('/<class_id>/absent/mark/<student_id>', methods=['POST'])
+@classes.route('/<class_id>/absence/add/<student_id>', methods=['POST'])
 @admin_required
 def mark_absent(class_id, student_id):
-    student_enrollment, student_absence = validate_student(class_id, student_id)
+    student_enrollment, student_absence = get_student_info(class_id, student_id)
 
     if student_absence:
         flash(f'{student_enrollment.student} has already been marked absent.')
     else:
-        attendance = Absence(student_id=student_id, class_id=class_id, date=datetime.utcnow().date())
-        db.session.add(attendance)
+        absence = Absence(student_id=student_id, class_id=class_id, date=datetime.utcnow().date())
+        db.session.add(absence)
         db.session.commit()
         flash(f'{student_enrollment.student} has been marked absent.', 'success')
 
     return redirect(url_for('classes.class_info', class_id=class_id))
 
 
-@classes.route('/<class_id>/absent/remove/<student_id>', methods=['POST'])
+@classes.route('/<class_id>/absence/remove/<student_id>', methods=['POST'])
 @admin_required
 def remove_absence(class_id, student_id):
-    student_enrollment, student_absence = validate_student(class_id, student_id)
+    student_enrollment, student_absence = get_student_info(class_id, student_id)
 
     if student_absence:
         db.session.delete(student_absence)
@@ -173,3 +173,19 @@ def remove_absence(class_id, student_id):
         flash(f"{student_enrollment.student}'s absence has already been removed'.")
 
     return redirect(url_for('classes.class_info', class_id=class_id))
+
+
+@classes.route('/<class_id>/absences/')
+@login_required
+def absence_log(class_id):
+    current_class = verify_class_exists(class_id)
+
+    if not current_class.has_user(current_user):
+        abort(403)
+
+    if current_user.is_teacher:
+        absences = Absence.query.filter_by(class_id=class_id).order_by(Absence.date.desc())
+    else:
+        absences = Absence.query.filter_by(class_id=class_id, student_id=current_user.id).order_by(Absence.date.desc())
+
+    return render_template('absence-log.html', current_class=current_class, absences=absences)

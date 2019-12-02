@@ -12,11 +12,20 @@
         {% endcall %}
         {% if classes %}
             {% for class in classes %}
-                <section class="card">
+                {% set section_style = 'card' %}
+                {% if class.has_user(current_user) %}
+                    {% if current_user.is_student and current_user.student.absent(class.id) %}
+                        {% set section_style = section_style + ' alert' %}
+                    {% else %}
+                        {% set section_style = section_style + ' emphasized' %}
+                    {% endif %}
+                {% endif %}
+                <section class="{{ section_style }}">
                     <header><h3><a href="{{ url_for('classes.class_info', class_id=class.id) }}">{{ class }}</a></header></h3>
                     {{ print_class_info(class) }}
-                    {% call action_links('h4', current_user.is_teacher) %}
-                        {{ nav_link(url_for('classes.edit_class', class_id=class.id), 'Edit') }}
+                    {% call action_links('h4', class.has_user(current_user)) %}
+                        {{ nav_link(url_for('classes.absence_log', class_id=class.id), 'View Absence Log') }}
+                        {{ nav_link(url_for('classes.edit_class', class_id=class.id), 'Edit', class.teacher == current_user.teacher) }}
                     {% endcall %}
                 </section>
             {% endfor %}
