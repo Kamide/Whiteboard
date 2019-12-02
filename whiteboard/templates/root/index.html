@@ -1,8 +1,10 @@
 {% extends 'layout.html' %}
 
-{% from 'macros.html' import action_links with context %}
+{% from 'macros.html' import action_links, get_user_classes, print_user_info with context %}
 
-{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
 
 {% block script %}
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/twitterFetcher_min.js') }}"></script>
@@ -26,10 +28,29 @@
 {% block body_attributes %}onload="initialize();"{% endblock %}
 
 {% block content %}
-    <section>
-        <header><h2>Whiteboard</h2></header>
-        <p>{{ lipsum() }}</p>
-    </section>
+    {% if current_user.is_authenticated %}
+        <section>
+            <header><h2>My Profile</h2></header>
+            <section class="card">
+                {{ print_user_info(current_user, 'h3') }}
+            </section>
+        </section>
+
+        <section>
+            <header><h2>My Classes</h2></header>
+            {% if current_user.classes %}
+                {{ get_user_classes(current_user) }}
+            {% else %}
+                <p class="emphasized"><em>You're not {{ 'teaching' if current_user.is_teacher else 'taking' }} any classes.</em></p>
+            {% endif %}
+        </section>
+    {% else %}
+        <section>
+            <header><h2>Whiteboard</h2></header>
+            <p><strong>Whiteboard</strong> is a web-based gradebook and attendance tracker for teachers and students.</p>
+        </section>
+    {% endif %}
+
     <section>
         <header><h2>Social Media</h2></header>
         <section id="twitter" class="card">

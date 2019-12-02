@@ -1,6 +1,6 @@
 {% extends 'forms.html' %}
 
-{% from 'macros.html' import action_links, print_class_info, get_csrf_token with context %}
+{% from 'macros.html' import action_links, print_class_card, get_csrf_token with context %}
 
 {% block title %}Classes - {{ super() }}{% endblock %}
 
@@ -10,24 +10,10 @@
         {% call action_links('h3', current_user.is_teacher) %}
             {{ nav_link(url_for('classes.new_class'), 'Add New Class') }}
         {% endcall %}
+
         {% if classes %}
             {% for class in classes %}
-                {% set section_style = 'card' %}
-                {% if class.has_user(current_user) %}
-                    {% if current_user.is_student and current_user.student.absent(class.id) %}
-                        {% set section_style = section_style + ' alert' %}
-                    {% else %}
-                        {% set section_style = section_style + ' emphasized' %}
-                    {% endif %}
-                {% endif %}
-                <section class="{{ section_style }}">
-                    <header><h3><a href="{{ url_for('classes.class_info', class_id=class.id) }}">{{ class }}</a></header></h3>
-                    {{ print_class_info(class) }}
-                    {% call action_links('h4', class.has_user(current_user)) %}
-                        {{ nav_link(url_for('classes.absence_log', class_id=class.id), 'View Absence Log') }}
-                        {{ nav_link(url_for('classes.edit_class', class_id=class.id), 'Edit', class.teacher == current_user.teacher) }}
-                    {% endcall %}
-                </section>
+                {{ print_class_card(class, actions_print_condition=class.has_user(current_user)) }}
             {% endfor %}
         {% else %}
             <p class="emphasized"><em>No classes listed.</em></p>

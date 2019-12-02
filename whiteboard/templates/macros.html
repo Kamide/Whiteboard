@@ -33,17 +33,16 @@
     {% endif %}
 {% endmacro %}
 
-{% macro get_csrf_token() %}
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{% macro get_return_link() %}
+    {% if request.referrer %}
+        {{ nav_link(request.referrer, 'Return to Previous Page') }}
+    {% else %}
+        {{ nav_link(url_for('root.index'), 'Return to Home Page') }}
+    {% endif %}
 {% endmacro %}
 
-{% macro print_user(user, class='') %}
-    <li class="{% if class %}{{ class }} {% endif %}card">
-        <a href="{{ url_for('auth.user_info', user_id=user.id) }}">{{ user }}</a>
-        {% if caller %}
-            {{ caller() }}
-        {% endif %}
-    </li>
+{% macro get_csrf_token() %}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 {% endmacro %}
 
 {% macro print_form(form, method, action='', class='') %}
@@ -74,8 +73,68 @@
     </form>
 {% endmacro %}
 
+{% macro print_user(user, class='') %}
+    <li class="{% if class %}{{ class }} {% endif %}card">
+        <a href="{{ url_for('auth.user_info', user_id=user.id) }}">{{ user }}</a>
+        {% if caller %}
+            {{ caller() }}
+        {% endif %}
+    </li>
+{% endmacro %}
+
+{% macro print_user_info(user, heading_level='h2') %}
+    <header>
+        <{{ heading_level }}>
+            {% if heading_level != 'h2' %}
+                {# This is being displayed on a page other than the `auth.user_info` page. #}
+                <a href="{{ url_for('auth.user_info', user_id=user.id) }}">{{ user }}</a>
+            {% else %}
+                {{ user }}
+            {% endif %}
+        </{{ heading_level }}>
+    </header>
+
+    <p>Email: <strong class="emphasized">{{ user.email }}</strong></p>
+    <p>Join Date: <strong class="emphasized">{{ user.join_date }}</strong></p>
+
+    {% if user.is_teacher %}
+        <p>Department: <strong class="emphasized">{{ user.department or 'Undeclared' }}</strong></p>
+        <p>Office: <strong class="emphasized">{{ user.office or 'Undeclared' }}</strong></p>
+        <p>Office Hours: <strong class="emphasized">{{ user.office_hours or 'Undeclared' }}</strong></p>
+    {% else %}
+        <p>Major: <strong class="emphasized">{{ user.major or 'Undeclared' }}</strong></p>
+    {% endif %}
+{% endmacro %}
+
 {% macro print_class_info(class) %}
     <p>Schedule: <strong class="emphasized">{{ class.schedule }}</strong></p>
     <p>Location: <strong class="emphasized">{{ class.location }}</strong></p>
     <p>Instructor: <strong class="emphasized">{{ class.teacher }}</strong></p>
+{% endmacro %}
+
+{% macro print_class_card(class, emphasized=True, actions_print_condition=True) %}
+    {% set section_style = '' %}
+    {% if class.has_user(current_user) %}
+        {% if current_user.is_student and current_user.student.absent(class.id) %}
+            {% set section_style = 'alert' %}
+        {% elif emphasized %}
+            {% set section_style = 'emphasized' %}
+        {% endif %}
+    {% endif %}
+
+    <section class="{% if section_style %}{{ section_style }} {% endif %}card">
+        <header><h3><a href="{{ url_for('classes.class_info', class_id=class.id) }}">{{ class }}</a></header></h3>
+        {% call action_links('h4', actions_print_condition) %}
+            {{ nav_link(url_for('classes.edit_class', class_id=class.id), 'Edit', class.teacher == current_user.teacher) }}
+            {{ nav_link(url_for('classes.absence_log', class_id=class.id), 'View Absence Log') }}
+        {% endcall %}
+
+        {{ print_class_info(class) }}
+    </section>
+{% endmacro %}
+
+{% macro get_user_classes(user, emphasized=False) %}
+    {% for class in user.classes %}
+        {{ print_class_card(class, emphasized) }}
+    {% endfor %}
 {% endmacro %}

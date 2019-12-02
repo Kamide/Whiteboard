@@ -7,6 +7,7 @@
         <header><h2>Admissions</h2></header>
         <section class="applicant card">
             {{ application(applicant) }}
+
             <p class="emphasized"><em>Are you sure you want to <strong>{{ request.form.decision }}</strong> this applicant?</em></p>
             <form class="inlined" method="post">
                 <div>

@@ -2,4 +2,6 @@
 
 {% from 'macros.html' import get_csrf_token, print_form with context %}
 
-{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">
+{% endblock %}

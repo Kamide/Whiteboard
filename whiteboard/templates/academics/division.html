@@ -1,6 +1,6 @@
 {% extends 'forms.html' %}
 
-{% from 'macros.html' import action_links with context %}
+{% from 'macros.html' import action_links, get_return_link with context %}
 
 {% block title %}{{ title }} - {{ super() }}{% endblock %}
 
@@ -8,8 +8,9 @@
     <section>
         <header><h2>{{ title }}</h2></header>
         {% call action_links('h3') %}
-            {{ nav_link(url_for(back_url or 'academics.index'), 'Go Back') }}
+            {{ get_return_link() }}
         {% endcall %}
+
         <section class="card">
             <header><h3>{{ card_title }}</h3></header>
             {{ print_form(form=form, method='post') }}

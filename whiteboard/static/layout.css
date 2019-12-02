@@ -143,14 +143,11 @@ main, .card {
 
 main section {
     position: relative;
+    margin-top: var(--margin-major);
 }
 
 footer {
     color: var(--text-color-subdued);
-}
-
-.actions ul {
-    margin-left: 0;
 }
 
 .card, .actions li, #tweets li, .interact a, button {
@@ -160,8 +157,13 @@ footer {
     box-shadow: 0 var(--thin) var(--thin) var(--card-outline-color);
 }
 
+.actions ul {
+    margin-left: 0;
+}
+
 .actions li, .actions a, .interact a, button {
     display: inline-block;
+    box-sizing: border-box;
 }
 
 .actions a, .interact a, button {
@@ -176,7 +178,6 @@ button {
     color: inherit;
     font-size: inherit;
     line-height: inherit;
-    box-sizing: border-box;
 }
 
 button:active {
@@ -219,12 +220,12 @@ button:disabled {
         background: linear-gradient(to right, var(--anchor-color) 25%, var(--main-bg-color) 25%);
     }
 
-    .card .actions {
-        padding: var(--thick);
-    }
-
     .actions ul {
         margin: 0;
+    }
+
+    .card .actions ul {
+        margin: var(--margin-minor);
     }
 
     .float-top-right {

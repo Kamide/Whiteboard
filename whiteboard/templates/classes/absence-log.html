@@ -22,11 +22,13 @@
                         <ul class="user-list">
                             {# Closing tags above #}
                 {% endif %}
+
                 {% call print_user(absence.student.user) %}
                     <ul>
-                        <li class="emphasized">{{ absence.student.absences|length }} Absence(s) in Total</li>
+                        <li class="emphasized">Absences: <strong>{{ absence.student.absences|length }}</strong></li>
                     </ul>
                 {% endcall %}
+
                 {% set ns.prev_date = absence.date %}
             {% endfor %}
                             {# Closing tags for last absence in absences #}

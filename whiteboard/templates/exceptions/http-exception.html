@@ -1,17 +1,19 @@
 {% extends 'layout.html' %}
 
-{% from 'macros.html' import action_links with context %}
+{% from 'macros.html' import action_links, get_return_link with context %}
 
 {% block title %}{{ status }} - {{ super() }}{% endblock %}
 
-{% block style %}<link rel="stylesheet" href="{{ url_for('static', filename='errorpages.css') }}">{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='errorpages.css') }}">
+{% endblock %}
 
 {% block content %}
     <section id="board">
         <header><h2>{{ status }}</h2></header>
         <p>{{ description }}</p>
-        {% call action_links('h3', current_user.is_teacher, class='actions') %}
-            {{ nav_link(url_for('root.index'), 'Return to Whiteboard') }}
+        {% call action_links('h3', class='actions') %}
+            {{ get_return_link() }}
         {% endcall %}
     </section>
 {% endblock %}

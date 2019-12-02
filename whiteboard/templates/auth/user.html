@@ -1,11 +1,20 @@
 {% extends 'users.html' %}
 
+{% from 'macros.html' import print_user_info, get_user_classes with context %}
+
 {% block title %}{{ user }} - {{ super() }}{% endblock %}
 
 {% block content %}
     <section>
-        <header><h2>{{ user }}</h2></header>
-        <p>Email: <strong class="emphasized">{{ user.email }}</strong></p>
-        <p>Join Date: <strong class="emphasized">{{ user.join_date }}</strong></p>
+        {{ print_user_info(user) }}
+
+        <section>
+            <header><h3>Classes</h3></header>
+            {% if user.classes %}
+                {{ get_user_classes(user, emphasized=True) }}
+            {% else %}
+                <p class="emphasized"><em>{{ user }} isn't {{ 'teaching' if current_user.is_teacher else 'taking' }} any classes.</em></p>
+            {% endif %}
+        </section>
     </section>
 {% endblock %}

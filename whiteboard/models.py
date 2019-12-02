@@ -28,6 +28,9 @@ class User(db.Model, UserMixin):
     teacher = db.relationship('Teacher', uselist=False, backref='user', cascade='all, delete')
     student = db.relationship('Student', uselist=False, backref='user', cascade='all, delete')
 
+    def __str__(self):
+        return f'{self.display_name or self.full_name} @{self.username}'
+
     @property
     def is_active(self):
         return self.join_date is not None
@@ -44,8 +47,12 @@ class User(db.Model, UserMixin):
     def identity(self):
         return 'Teacher' if self.is_teacher else 'Student'
 
-    def __str__(self):
-        return f'{self.display_name or self.full_name} @{self.username}'
+    @property
+    def classes(self):
+        if self.is_teacher:
+            return self.teacher.classes
+        else:
+            return Class.query.join(Enrollment).filter_by(student_id=self.id)
 
 
 class Teacher(db.Model):

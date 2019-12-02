@@ -1,6 +1,6 @@
 {% extends 'classes.html' %}
 
-{% from 'macros.html' import print_user with context %}
+{% from 'macros.html' import print_class_info, print_user with context %}
 
 {% block title %}{{ current_class }} - {{ super() }}{% endblock %}
 
@@ -12,7 +12,11 @@
 {% block content %}
     <section>
         <header><h2>{{ current_class }}</h2></header>
+        {% call action_links('h3', current_class.teacher == current_user.teacher) %}
+            {{ nav_link(url_for('classes.edit_class', class_id=current_class.id), 'Edit') }}
+        {% endcall %}
         {{ print_class_info(current_class) }}
+
         <section>
             <header><h3>Students</h3></header>
             {% block actions %}
@@ -20,12 +24,14 @@
                     {% block enrollment_toggler %}
                         {{ nav_link(url_for('classes.enrollment', class_id=current_class.id), 'Show Enrollment Panel', current_class.teacher == current_user.teacher) }}
                     {% endblock %}
+
                     {% block absence_toggler %}
                         {# Do not show absence log to users not enrolled in or teaching the class. #}
                         {{ nav_link(url_for('classes.absence_log', class_id=current_class.id), 'View Absence Log', current_class.has_user(current_user)) }}
                     {% endblock %}
                 {% endcall %}
             {% endblock %}
+
             {% block subcontent %}
                 {% if students.count() > 0 %}
                     <ul class="user-list">
@@ -35,6 +41,7 @@
                             {% else %}
                                 {% set print_user_class = '' %}
                             {% endif %}
+
                             {% if current_class.teacher.user == current_user %}
                                 {% call print_user(student.user, class=print_user_class) %}
                                     <form class="inlined" method="post">
