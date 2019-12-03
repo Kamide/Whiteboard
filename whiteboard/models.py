@@ -50,7 +50,7 @@ class User(db.Model, UserMixin):
     @property
     def classes(self):
         if self.is_teacher:
-            return self.teacher.classes
+            return Class.query.filter_by(teacher_id=self.id)
         else:
             return Class.query.join(Enrollment).filter_by(student_id=self.id)
 
