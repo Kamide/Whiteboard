@@ -10,10 +10,10 @@
 
         <section>
             <header><h3>Classes</h3></header>
-            {% if user.classes %}
+            {% if user.classes.count() > 0 %}
                 {{ get_user_classes(user, emphasized=True) }}
             {% else %}
-                <p class="emphasized"><em>{{ user }} isn't {{ 'teaching' if current_user.is_teacher else 'taking' }} any classes.</em></p>
+                <p class="emphasized"><em>{{ user }} isn't {{ 'teaching' if user.is_teacher else 'taking' }} any classes.</em></p>
             {% endif %}
         </section>
     </section>
