@@ -27,6 +27,7 @@
                 </ul>
             </nav>
         </header>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <section class="messages masthead">
@@ -39,6 +40,7 @@
                 </section>
             {% endif %}
         {% endwith %}
+
         <main>{% block content %}{% endblock %}</main>
     </body>
 </html>

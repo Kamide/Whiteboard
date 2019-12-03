@@ -9,7 +9,7 @@
 {% block subcontent %}
     <section>
         <header><h4>Absence Log</h4></header>
-        {% if absences %}
+        {% if absences.count() > 0 %}
             {% set ns = namespace(prev_date=none) %}
             {% for absence in absences %}
                 {% if ns.prev_date is none or absence.date != ns.prev_date%}
