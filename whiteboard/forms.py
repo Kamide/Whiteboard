@@ -4,7 +4,7 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import Email, EqualTo, InputRequired, Length, Regexp, ValidationError
 from whiteboard import settings as wbs
-from whiteboard.models import Course, Department, Student, Term, User
+from whiteboard.models import Course, Department, Major, Student, Term, User
 
 
 def student_query():
@@ -13,6 +13,10 @@ def student_query():
 
 def department_query():
     return Department.query
+
+
+def major_query():
+    return Major.query
 
 
 def term_query():
@@ -38,6 +42,18 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(min=wbs.CAMPUS_CARD.min_len, max=wbs.CAMPUS_CARD.max_len)])
     password = PasswordField('Password', validators=[InputRequired()])
     submit = SubmitField('Log In')
+
+
+class EditTeacherForm(FlaskForm):
+    department = QuerySelectField('Department', query_factory=department_query, allow_blank=True)
+    office = StringField('Office', validators=[Length(max=255)])
+    office_hours = StringField('Office Hours', validators=[Length(max=255)])
+    submit = SubmitField('Apply Changes')
+
+
+class EditStudentForm(FlaskForm):
+    major = QuerySelectField('Major', query_factory=major_query, allow_blank=True)
+    submit = SubmitField('Apply Changes')
 
 
 class DepartmentForm(FlaskForm):

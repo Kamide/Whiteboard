@@ -11,9 +11,11 @@
             {{ get_return_link() }}
         {% endcall %}
 
-        <section class="card">
-            <header><h3>{{ card_title }}</h3></header>
-            {{ print_form(form=form, method='post') }}
-        </section>
+        {% block subcontent %}
+            <section class="card">
+                <header><h3>{{ card_title }}</h3></header>
+                {{ print_form(form=form, method='post') }}
+            </section>
+        {% endblock %}
     </section>
 {% endblock %}

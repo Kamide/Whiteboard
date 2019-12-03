@@ -34,7 +34,7 @@
 {% endmacro %}
 
 {% macro get_return_link() %}
-    {% if request.referrer %}
+    {% if request.referrer and request.referrer != request.url %}
         {{ nav_link(request.referrer, 'Return to Previous Page') }}
     {% else %}
         {{ nav_link(url_for('root.index'), 'Return to Home Page') }}
@@ -94,15 +94,21 @@
         </{{ heading_level }}>
     </header>
 
+    {% if user == current_user %}
+        {% call action_links('h4') %}
+            {{ nav_link(url_for('auth.edit_profile'), 'Edit') }}
+        {% endcall %}
+    {% endif %}
+
     <p>Email: <strong class="emphasized">{{ user.email }}</strong></p>
     <p>Join Date: <strong class="emphasized">{{ user.join_date }}</strong></p>
 
     {% if user.is_teacher %}
-        <p>Department: <strong class="emphasized">{{ user.department or 'Undeclared' }}</strong></p>
-        <p>Office: <strong class="emphasized">{{ user.office or 'Undeclared' }}</strong></p>
-        <p>Office Hours: <strong class="emphasized">{{ user.office_hours or 'Undeclared' }}</strong></p>
+        <p>Department: <strong class="emphasized">{{ user.teacher.department or 'Undeclared' }}</strong></p>
+        <p>Office: <strong class="emphasized">{{ user.teacher.office or 'Undeclared' }}</strong></p>
+        <p>Office Hours: <strong class="emphasized">{{ user.teacher.office_hours or 'Undeclared' }}</strong></p>
     {% else %}
-        <p>Major: <strong class="emphasized">{{ user.major or 'Undeclared' }}</strong></p>
+        <p>Major: <strong class="emphasized">{{ user.student.major or 'Undeclared' }}</strong></p>
     {% endif %}
 {% endmacro %}
 

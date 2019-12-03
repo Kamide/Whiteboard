@@ -1,9 +1,9 @@
 from datetime import datetime
-from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import login_required, login_user, logout_user
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from whiteboard import settings as wbs
-from whiteboard.forms import LoginForm, RegistrationForm
+from whiteboard.forms import EditStudentForm, EditTeacherForm, LoginForm, RegistrationForm
 from whiteboard.models import Student, Teacher, User, db
 from whiteboard.views import admin_required, anonymous_required
 from whiteboard.views.exceptions import EntityNotFound
@@ -121,3 +121,24 @@ def user_info(user_id):
         raise EntityNotFound(entity_name=User.__name__, entity_id=user_id)
 
     return render_template('user.html', user=user)
+
+
+@auth.route('/users/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    if current_user.is_teacher:
+        form = EditTeacherForm(obj=current_user.teacher)
+
+        if form.validate_on_submit():
+            form.populate_obj(current_user.teacher)
+            db.session.commit()
+            flash('Your profile has been updated!', 'success')
+    else:
+        form = EditStudentForm(obj=current_user.student)
+
+        if form.validate_on_submit():
+            form.populate_obj(current_user.student)
+            db.session.commit()
+            flash('Your profile has been updated!', 'success')
+
+    return render_template('edit-profile.html', title='Edit Profile', form=form)

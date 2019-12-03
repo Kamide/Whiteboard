@@ -35,7 +35,7 @@ def new_department():
             flash(f'{department} has been created.', 'success')
             return redirect(url_for('academics.index'))
 
-    return render_template('division.html', title='Departments', card_title='New Department', form=form)
+    return render_template('edit-form.html', title='Departments', card_title='New Department', form=form)
 
 
 @academics.route('/departments/edit/<department_id>', methods=['GET', 'POST'])
@@ -58,7 +58,7 @@ def edit_department(department_id):
             db.session.commit()
             flash(f'Changes to department #{department.id} have been made.', 'success')
 
-    return render_template('division.html', title='Departments', card_title=f'Editing Department #{department.id}: {department}', form=form)
+    return render_template('edit-form.html', title='Departments', card_title=f'Editing Department #{department.id}: {department}', form=form)
 
 
 @academics.route('/majors/new', methods=['GET', 'POST'])
@@ -79,7 +79,7 @@ def new_major():
             flash(f'{major} has been created.', 'success')
             return redirect(url_for('academics.index'))
 
-    return render_template('division.html', title='Majors', card_title='New Major', form=form)
+    return render_template('edit-form.html', title='Majors', card_title='New Major', form=form)
 
 
 @academics.route('/majors/edit/<major_id>', methods=['GET', 'POST'])
@@ -102,7 +102,7 @@ def edit_major(major_id):
             db.session.commit()
             flash(f'Changes to major #{major.id} have been made.', 'success')
 
-    return render_template('division.html', title='Majors', card_title=f'Editing Major #{major.id}: {major}', form=form)
+    return render_template('edit-form.html', title='Majors', card_title=f'Editing Major #{major.id}: {major}', form=form)
 
 
 @academics.route('/courses/new', methods=['GET', 'POST'])
@@ -127,7 +127,7 @@ def new_course():
             flash(f'{course} has been created.', 'success')
             return redirect(url_for('academics.index'))
 
-    return render_template('division.html', title='Courses', card_title='New Course', form=form)
+    return render_template('edit-form.html', title='Courses', card_title='New Course', form=form)
 
 
 @academics.route('/courses/edit/<course_id>', methods=['GET', 'POST'])
@@ -150,7 +150,7 @@ def edit_course(course_id):
             db.session.commit()
             flash(f'Changes to course #{course.id} have been made.', 'success')
 
-    return render_template('division.html', title='Courses', card_title=f'Editing Course #{course.id}: {course}', form=form)
+    return render_template('edit-form.html', title='Courses', card_title=f'Editing Course #{course.id}: {course}', form=form)
 
 
 @academics.route('/terms/new', methods=['GET', 'POST'])
@@ -171,7 +171,7 @@ def new_term():
             flash(f'{term} has been created.', 'success')
             return redirect(url_for('academics.index'))
 
-    return render_template('division.html', title=wbs.ACADEMIC_TERM.system_plural_capital, card_title=f'New {wbs.ACADEMIC_TERM.system_capital}', form=form)
+    return render_template('edit-form.html', title=wbs.ACADEMIC_TERM.system_plural_capital, card_title=f'New {wbs.ACADEMIC_TERM.system_capital}', form=form)
 
 
 @academics.route('/terms/edit/<term_id>', methods=['GET', 'POST'])
@@ -194,4 +194,4 @@ def edit_term(term_id):
             db.session.commit()
             flash(f'Changes to {wbs.ACADEMIC_TERM.system} #{term.id} have been made.', 'success')
 
-    return render_template('division.html', title=wbs.ACADEMIC_TERM.system_plural_capital, card_title=f'Editing {wbs.ACADEMIC_TERM.system_capital} #{term.id}: {term}', form=form)
+    return render_template('edit-form.html', title=wbs.ACADEMIC_TERM.system_plural_capital, card_title=f'Editing {wbs.ACADEMIC_TERM.system_capital} #{term.id}: {term}', form=form)
