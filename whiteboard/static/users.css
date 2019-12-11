@@ -2,21 +2,29 @@
     margin-left: 0;
 }
 
-.user-list ul {
-    position: relative;
-    margin: 0;
-    list-style: none;
+.user-list > li, .user-list ul {
+    display: flex;
 }
 
 .user-list > li {
-    display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
 }
 
 .user-list > li > a {
     flex: 1;
     padding: var(--margin-minor) 0;
+}
+
+.user-list ul {
+    align-items: center;
+    position: relative;
+    margin: 0;
+    list-style: none;
+}
+
+.user-list ul > li:not(:first-child) {
+    margin-left: var(--margin-minor);
 }
 
 .user-list form {
@@ -29,4 +37,15 @@
 
 .absent {
     border-color: var(--error-color);
+}
+
+@media only screen and (min-width: 800px) {
+    .user-list > li {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .user-list ul > li:first-child {
+        margin-left: var(--margin-minor);
+    }
 }

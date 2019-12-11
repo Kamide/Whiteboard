@@ -1,0 +1,11 @@
+{% extends 'absence-log.html' %}
+
+{% block title %}Record Absence - {{ super() }}{% endblock %}
+
+{% block record_toggler %}
+    {{ nav_link(url_for('classes.absence_log', class_id=current_class.id), 'Exit Manual Mode') }}
+{% endblock %}
+
+{% block abs_log_subcontent %}
+    {{ print_form(form=form, method='post') }}
+{% endblock %}

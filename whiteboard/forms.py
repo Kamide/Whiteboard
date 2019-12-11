@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
@@ -99,3 +100,13 @@ class ClassForm(FlaskForm):
 
 class EnrollmentForm(FlaskForm):
     student = QuerySelectField('Student', query_factory=student_query, allow_blank=False)
+
+
+class AbsenceForm(FlaskForm):
+    student = QuerySelectField('Student', query_factory=student_query, allow_blank=False)
+    date = DateField('Date')
+    submit = SubmitField('Record Absence')
+
+    def validate_date(form, field):
+        if field.data and form.date.data > datetime.utcnow().date():
+            raise ValidationError('You cannot record an absence from the future.')

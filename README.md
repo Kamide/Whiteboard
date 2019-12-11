@@ -18,6 +18,7 @@ Enter the following commands in a terminal:
 ```bash
 export FLASK_APP=whiteboard
 export FLASK_ENV=development
+# flask db migrate # Run this to initialize the database.
 flask run
 ```
 

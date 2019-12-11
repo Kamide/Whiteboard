@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from whiteboard import settings as wbs
-from whiteboard.forms import ClassForm, EnrollmentForm
+from whiteboard.forms import AbsenceForm, ClassForm, EnrollmentForm
 from whiteboard.models import Absence, Class, Course, Enrollment, Student, Term, db
 from whiteboard.views import admin_required
 from whiteboard.views.exceptions import EntityNotFound
@@ -28,14 +28,14 @@ def verify_user_teaches_class(class_id):
     return current_class
 
 
-def get_student_info(class_id, student_id):
+def get_student_info(class_id, student_id, date=datetime.utcnow().date()):
     verify_user_teaches_class(class_id)
     student_enrollment = Enrollment.query.filter_by(student_id=student_id, class_id=class_id).first()
 
     if not student_enrollment:
         abort(400)
 
-    student_absence = Absence.query.filter_by(student_id=student_id, class_id=class_id, date=datetime.utcnow().date()).first()
+    student_absence = Absence.query.filter_by(student_id=student_id, class_id=class_id, date=date).first()
     return student_enrollment, student_absence
 
 
@@ -144,38 +144,50 @@ def enrollment(class_id):
     return render_template('enrollment.html', current_class=current_class, students=students, form=form)
 
 
-@classes.route('/<class_id>/absence/add/<student_id>', methods=['POST'])
+@classes.route('/<class_id>/absence/add/<date>/<student_id>', methods=['POST'])
 @admin_required
-def mark_absent(class_id, student_id):
-    student_enrollment, student_absence = get_student_info(class_id, student_id)
+def mark_absent(class_id, date, student_id):
+    utcnow_date = datetime.utcnow().date() if date == 'today' else date
+    student_enrollment, student_absence = get_student_info(class_id, student_id, utcnow_date)
 
-    if student_absence:
-        flash(f'{student_enrollment.student} has already been marked absent.')
+    if utcnow_date < student_enrollment.class_.term.start_date:
+        flash('Date of absence must be on or after the semester start date.', 'error')
+    elif utcnow_date > student_enrollment.class_.term.end_date:
+        flash('Date of absence must be on or before the semester end date.', 'error')
     else:
-        absence = Absence(student_id=student_id, class_id=class_id, date=datetime.utcnow().date())
-        db.session.add(absence)
-        db.session.commit()
-        flash(f'{student_enrollment.student} has been marked absent.', 'success')
+        if student_absence:
+            flash(f'{student_enrollment.student} has already been marked absent.')
+        else:
+            absence = Absence(student_id=student_id, class_id=class_id, date=utcnow_date)
+            db.session.add(absence)
+            db.session.commit()
+            flash(f'{student_enrollment.student} has been marked absent.', 'success')
 
     return redirect(url_for('classes.class_info', class_id=class_id))
 
 
-@classes.route('/<class_id>/absence/remove/<student_id>', methods=['POST'])
+@classes.route('/<class_id>/absence/remove/<date>/<student_id>', methods=['POST'])
 @admin_required
-def remove_absence(class_id, student_id):
-    student_enrollment, student_absence = get_student_info(class_id, student_id)
+def remove_absence(class_id, date, student_id):
+    if date == 'today':
+        student_enrollment, student_absence = get_student_info(class_id, student_id)
+    else:
+        student_enrollment, student_absence = get_student_info(class_id, student_id, date)
 
     if student_absence:
         db.session.delete(student_absence)
         db.session.commit()
         flash(f"{student_enrollment.student}'s absence has been removed.", 'success')
     else:
-        flash(f"{student_enrollment.student}'s absence has already been removed'.")
+        flash(f"{student_enrollment.student}'s absence has already been removed.")
 
-    return redirect(url_for('classes.class_info', class_id=class_id))
+    if request.referrer:
+        return redirect(request.referrer)
+    else:
+        return redirect(url_for('classes.class_info', class_id=class_id))
 
 
-@classes.route('/<class_id>/absences/')
+@classes.route('/<class_id>/absences/', methods=['GET', 'POST'])
 @login_required
 def absence_log(class_id):
     current_class = verify_class_exists(class_id)
@@ -189,3 +201,18 @@ def absence_log(class_id):
         absences = Absence.query.filter_by(class_id=class_id, student_id=current_user.id).order_by(Absence.date.desc())
 
     return render_template('absence-log.html', current_class=current_class, absences=absences)
+
+
+@classes.route('/<class_id>/absences/record', methods=['GET', 'POST'])
+@admin_required
+def record_absence(class_id):
+    current_class = verify_class_exists(class_id)
+    absences = Absence.query.filter_by(class_id=class_id).order_by(Absence.date.desc())
+    form = AbsenceForm()
+    form.student.query = Student.query.join(Enrollment).filter_by(class_id=class_id)
+
+    if form.validate_on_submit():
+        # Do not use the template returned by `mark_absent`
+        mark_absent(class_id=class_id, date=form.date.data, student_id=form.student.data.user.id)
+
+    return render_template('record-absence.html', current_class=current_class, absences=absences, form=form)

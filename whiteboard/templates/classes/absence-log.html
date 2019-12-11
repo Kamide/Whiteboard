@@ -9,6 +9,14 @@
 {% block subcontent %}
     <section>
         <header><h4>Absence Log</h4></header>
+        {% call action_links('h5', current_class.teacher == current_user.teacher) %}
+            {% block record_toggler %}
+                {{ nav_link(url_for('classes.record_absence', class_id=current_class.id), 'Enter Manual Mode') }}
+            {% endblock %}
+        {% endcall %}
+
+        {% block abs_log_subcontent %}{% endblock %}
+
         {% if absences.count() > 0 %}
             {% set ns = namespace(prev_date=none) %}
             {% for absence in absences %}
@@ -26,6 +34,14 @@
                 {% call print_user(absence.student.user) %}
                     <ul>
                         <li class="emphasized">Absences: <strong>{{ absence.student.absences|length }}</strong></li>
+                        {% if current_class.teacher == current_user.teacher %}
+                            <li>
+                                <form class="inlined" action="{{ url_for('classes.remove_absence', class_id=absence.class_id, date=absence.date, student_id=absence.student_id) }}" method="post">
+                                    {{ get_csrf_token() }}
+                                    <input type="submit" name="action" value="Remove Absence">
+                                </form>
+                            </li>
+                        {% endif %}
                     </ul>
                 {% endcall %}
 
@@ -35,7 +51,15 @@
                         </ul>
                     </section>
         {% else %}
-            <p class="emphasized"><em>No student was absent so far.</em></p>
+            <p class="emphasized">
+                <em>
+                    {% if current_user.is_teacher %}
+                        No student was absent so far.
+                    {% else %}
+                        You don't have any absences.
+                    {% endif %}
+                </em>
+            </p>
         {% endif %}
     </section>
 {% endblock %}
