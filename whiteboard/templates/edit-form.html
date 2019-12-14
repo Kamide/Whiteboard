@@ -2,14 +2,16 @@
 
 {% from 'macros.html' import action_links, get_return_link with context %}
 
-{% block title %}{{ title }} - {{ super() }}{% endblock %}
+{% block title %}{{ card_title }} - {{ title }} - {{ super() }}{% endblock %}
 
 {% block content %}
     <section>
-        <header><h2>{{ title }}</h2></header>
-        {% call action_links('h3') %}
-            {{ get_return_link() }}
-        {% endcall %}
+        <header>
+            <h2>{{ title }}</h2>
+            {% call action_links() %}
+                {{ get_return_link() }}
+            {% endcall %}
+        </header>
 
         {% block subcontent %}
             <section class="card">

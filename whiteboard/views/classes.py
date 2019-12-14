@@ -64,14 +64,13 @@ def new_class():
     form = ClassForm()
 
     if form.validate_on_submit():
-        candidate = Class.query.filter_by(term_id=form.term.data.id, course_id=form.course.data.id, section=form.section.data).first()
+        candidate = Class.query.filter_by(term_id=form.term.data.id, course_id=form.course.data.id).filter(Class.section.ilike(form.section.data)).first()
 
         if candidate:
             flash(f'A class with that {wbs.ACADEMIC_TERM.system}, course, and section already exists.', 'error')
         else:
-            class_ = Class()
+            class_ = Class(teacher_id=current_user.id)
             form.populate_obj(class_)
-            class_.teacher_id = current_user.id
             db.session.add(class_)
             db.session.commit()
             flash(f'{class_} has been created.', 'success')
@@ -87,7 +86,7 @@ def edit_class(class_id):
     form = ClassForm(obj=class_)
 
     if form.validate_on_submit():
-        candidate = Class.query.filter_by(term_id=form.term.data.id, course_id=form.course.data.id, section=form.section.data).first()
+        candidate = Class.query.filter_by(term_id=form.term.data.id, course_id=form.course.data.id).filter(Class.section.ilike(form.section.data)).first()
 
         if candidate and candidate != class_:
             flash(f'A class with that {wbs.ACADEMIC_TERM.system}, course, and section already exists.')
@@ -151,9 +150,9 @@ def mark_absent(class_id, date, student_id):
     student_enrollment, student_absence = get_student_info(class_id, student_id, utcnow_date)
 
     if utcnow_date < student_enrollment.class_.term.start_date:
-        flash('Date of absence must be on or after the semester start date.', 'error')
+        flash(f'Date of absence must be on or after the {wbs.ACADEMIC_TERM.system} start date.', 'error')
     elif utcnow_date > student_enrollment.class_.term.end_date:
-        flash('Date of absence must be on or before the semester end date.', 'error')
+        flash(f'Date of absence must be on or before the {wbs.ACADEMIC_TERM.system} end date.', 'error')
     else:
         if student_absence:
             flash(f'{student_enrollment.student} has already been marked absent.')

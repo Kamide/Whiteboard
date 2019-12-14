@@ -14,18 +14,22 @@
     </head>
     <body {% block body_attributes %}{% endblock %}>
         <header class="masthead">
-            <nav class="masthead">
-                <header><h1><a {% if request.endpoint == 'root.index' %}class="active-page"{% endif %} href="{{ url_for('root.index') }}" title="Home Page">Whiteboard</a></h1></header>
-                <ul>
-                    {{ nav_link('classes.index', 'Classes', current_user.is_authenticated) }}
-                    {{ nav_link('academics.index', 'Academics', title='Departments, Majors, Courses, ' + config.ACADEMIC_TERM.system_plural_capital) }}
-                    {{ nav_link('auth.users', 'Users', current_user.is_authenticated) }}
-                    {{ nav_link('auth.applicants', 'Applicants', current_user.is_teacher) }}
-                    {{ nav_link('auth.register', 'Register', current_user.is_anonymous) }}
-                    {{ nav_link('auth.login', 'Log In', current_user.is_anonymous) }}
-                    {{ nav_link('auth.logout', 'Log Out', current_user.is_authenticated) }}
-                </ul>
-            </nav>
+            <div class="masthead">
+                <h1><a {% if request.endpoint == 'root.index' %}class="active-page"{% endif %} href="{{ url_for('root.index') }}" title="Home Page">Whiteboard</a></h1>
+                <nav class="masthead">
+                    <ul>
+                        {# TODO #}
+                        {# {{ nav_link('grades.index', 'Grades', current_user.is_authenticated) }} #}
+                        {{ nav_link('classes.index', 'Classes', current_user.is_authenticated) }}
+                        {{ nav_link('academics.index', 'Academics', title='Departments, Majors, Courses, ' + config.ACADEMIC_TERM.system_plural_capital) }}
+                        {{ nav_link('auth.users', 'Users', current_user.is_authenticated) }}
+                        {{ nav_link('auth.applicants', 'Applicants', current_user.is_teacher) }}
+                        {{ nav_link('auth.register', 'Register', current_user.is_anonymous) }}
+                        {{ nav_link('auth.login', 'Log In', current_user.is_anonymous) }}
+                        {{ nav_link('auth.logout', 'Log Out', current_user.is_authenticated) }}
+                    </ul>
+                </nav>
+            </div>
         </header>
 
         {% with messages = get_flashed_messages(with_categories=true) %}

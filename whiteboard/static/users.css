@@ -28,7 +28,7 @@
 }
 
 .user-list form {
-    margin: 0;
+    margin-top: 0;
 }
 
 .current-user {
@@ -47,5 +47,9 @@
 
     .user-list ul > li:first-child {
         margin-left: var(--margin-minor);
+    }
+
+    .user-list form {
+        margin: 0;
     }
 }

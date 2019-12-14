@@ -1,0 +1,39 @@
+#weight {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 0 calc(var(--margin-minor) / 2);
+    align-items: center;
+}
+
+#weight input[type=number] {
+    width: 4em;
+    margin: 0;
+    border-left: 0;
+    border-right: 0;
+    border-width: var(--medium);
+    border-color: var(--header-outline-color);
+}
+
+#weight input[type=number]:hover {
+    border-color: var(--text-color-subdued);
+}
+
+#weight input[type=number]:focus {
+    border-color: var(--text-color-saturated);
+}
+
+#weight_numerator {
+    border-top: 0;
+}
+
+#weight_denominator {
+    border-bottom: 0;
+}
+
+#weight > div {
+    display: contents;
+}
+
+#weight > div span {
+    margin: var(--margin-minor) 0;
+}

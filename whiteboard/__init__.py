@@ -38,4 +38,7 @@ def create_app():
         from whiteboard.views.classes import classes as classes_blueprint
         app.register_blueprint(classes_blueprint)
 
+        from whiteboard.views.grades import grades as grades_blueprint
+        app.register_blueprint(grades_blueprint)
+
         return app

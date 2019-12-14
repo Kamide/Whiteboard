@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from flask_login import LoginManager, UserMixin
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -114,12 +115,12 @@ class Major(db.Model):
 class Course(db.Model):
     __tablename__ = 'Courses'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id', ondelete='CASCADE'))
+    department_id = db.Column(db.Integer, db.ForeignKey('Departments.id', ondelete='CASCADE'), nullable=False)
     code = db.Column(db.String(wbs.COURSE_CODE_LEN))
     name = db.Column(db.String(255), nullable=False)
 
-    classes = db.relationship('Class', backref='course', cascade='all, delete')
     __table_args__ = (db.UniqueConstraint('department_id', 'code'), )
+    classes = db.relationship('Class', backref='course', cascade='all, delete')
 
     def __str__(self):
         return f'{self.department.abbreviation} {self.code}'
@@ -141,16 +142,18 @@ class Term(db.Model):
 class Class(db.Model):
     __tablename__ = 'Classes'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    teacher_id = db.Column(db.Integer, db.ForeignKey('Teachers.user_id', ondelete='CASCADE'))
-    term_id = db.Column(db.Integer, db.ForeignKey('Terms.id', ondelete='CASCADE'))
-    course_id = db.Column(db.Integer, db.ForeignKey('Courses.id', ondelete='CASCADE'))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('Teachers.user_id', ondelete='CASCADE'), nullable=False)
+    term_id = db.Column(db.Integer, db.ForeignKey('Terms.id', ondelete='CASCADE'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('Courses.id', ondelete='CASCADE'), nullable=False)
     section = db.Column(db.String(wbs.CLASS_SECTION_LEN), nullable=False)
     schedule = db.Column(db.String(255), nullable=False)
     location = db.Column(db.String(255), nullable=False)
 
+    __table_args__ = (db.UniqueConstraint('term_id', 'course_id', 'section'), )
     enrollments = db.relationship('Enrollment', backref='class_', cascade='all, delete')
     absences = db.relationship('Absence', backref='class_', cascade='all, delete')
-    __table_args__ = (db.UniqueConstraint('term_id', 'course_id', 'section'), )
+    assignment_types = db.relationship('AssignmentType', backref='class_', cascade='all, delete')
+    assignments = db.relationship('Assignment', backref='class_', cascade='all, delete')
 
     def __str__(self):
         return f'{self.term} {self.course}-{self.section}'
@@ -178,11 +181,65 @@ class Enrollment(db.Model):
 
 class Absence(db.Model):
     __tablename__ = 'Absences'
-    student_id = db.Column(db.Integer, db.ForeignKey('Students.user_id', ondelete='CASCADE'), primary_key=True)
-    class_id = db.Column(db.Integer, db.ForeignKey('Classes.id', ondelete='CASCADE'), primary_key=True)
-    date = db.Column(db.Date(), primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.user_id', ondelete='CASCADE'))
+    class_id = db.Column(db.Integer, db.ForeignKey('Classes.id', ondelete='CASCADE'))
+    date = db.Column(db.Date())
 
     __table_args__ = (db.PrimaryKeyConstraint('student_id', 'class_id', 'date'), )
 
     def __str__(self):
         return f'{self.class_}—{self.student}: Absent on {self.date}'
+
+
+class AssignmentType(db.Model):
+    __tablename__ = 'AssignmentTypes'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    class_id = db.Column(db.Integer, db.ForeignKey('Classes.id', ondelete='CASCADE'), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    weight = db.Column(db.Integer, nullable=False)
+
+    __table_args__ = (db.UniqueConstraint('class_id', 'name'),
+                      db.CheckConstraint('weight > 0', 'CC_Weight'))
+    assignments = db.relationship('Assignment', backref='assignmenttype', cascade='all, delete')
+
+    def __repr__(self):
+        return f'{self.class_}—{self.name} (Weight: {self.weight})'
+
+    def __str__(self):
+        return f'{self.name}: {round(self.actual_weight, 2):.3g}%'
+
+    def collective_weight(self):
+        return db.session.query(db.func.sum(AssignmentType.weight)).filter_by(class_id=self.class_id).scalar()
+
+    @property
+    def actual_weight(self):
+        return self.weight * 100 / self.collective_weight()
+
+    @property
+    def count(self):
+        return len(self.assignments)
+
+
+class Assignment(db.Model):
+    __tablename__ = 'Assignments'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    class_id = db.Column(db.Integer, db.ForeignKey('Classes.id', ondelete='CASCADE'), nullable=False)
+    assignmenttype_id = db.Column(db.ForeignKey('AssignmentTypes.id', ondelete='CASCADE'), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    weight_numerator = db.Column(db.Integer, nullable=False)
+    weight_denominator = db.Column(db.Integer, nullable=False)
+    due_date = db.Column(db.Date(), nullable=False)
+    description = db.Column(db.String(255))
+
+    __table_args__ = (db.UniqueConstraint('class_id', 'assignmenttype_id', 'name'),
+                      db.CheckConstraint('weight_numerator > 0 AND weight_numerator < 101 AND weight_denominator > 0 AND weight_denominator < 101', name='CC_Weight'))
+
+    def __repr__(self):
+        return f'{self.class_}—{self.name}: Due on {self.due_date}'
+
+    def __str__(self):
+        return f'{self.name} (Due on {self.due_date})'
+
+    @property
+    def weight(self):
+        return '%.2g' % round(self.weight_numerator / self.weight_denominator, 3)

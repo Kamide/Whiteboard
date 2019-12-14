@@ -6,11 +6,12 @@
 
 {% block content %}
     <section>
-        <header><h2>Classes</h2></header>
-        {% call action_links('h3', current_user.is_teacher) %}
-            {{ nav_link(url_for('classes.new_class'), 'Add New Class') }}
-        {% endcall %}
-
+        <header>
+            <h2>Classes</h2>
+            {% call action_links(current_user.is_teacher) %}
+                {{ nav_link(url_for('classes.new_class'), 'Add New Class', append_return_url=True) }}
+            {% endcall %}
+        </header>
         {% if classes %}
             {% for class in classes %}
                 {{ print_class_card(class, actions_print_condition=class.has_user(current_user)) }}

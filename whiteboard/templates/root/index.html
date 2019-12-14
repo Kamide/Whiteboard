@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% from 'macros.html' import action_links, get_user_classes, print_user_info with context %}
+{% from 'macros.html' import get_user_classes, print_user_info with context %}
 
 {% block style %}
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
@@ -55,12 +55,6 @@
         <header><h2>Social Media</h2></header>
         <section id="twitter" class="card">
             <header><h3>Twitter</h3></header>
-            {#
-            {% call action_links('h4', header='Posts', use_list=False) %}
-                <button>Older</button>
-                <button>Newer</button>
-            {% endcall %}
-            #}
             <div id="tweets"></div>
         </section>
     </section>

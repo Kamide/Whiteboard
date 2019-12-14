@@ -1,0 +1,14 @@
+#assignments {
+    width: 100%;
+    margin: calc(-1 * var(--margin-minor));
+    border-spacing: var(--margin-minor);
+}
+
+#assignments th, #assignments tr:not(:last-child) td {
+    border-bottom: var(--thin) solid var(--card-outline-color);
+}
+
+#assignments th {
+    text-align: left;
+    border-color: var(--text-subdued-color);
+}

@@ -6,6 +6,6 @@
     {{ nav_link(url_for('classes.absence_log', class_id=current_class.id), 'Exit Manual Mode') }}
 {% endblock %}
 
-{% block abs_log_subcontent %}
+{% block log_content %}
     {{ print_form(form=form, method='post') }}
 {% endblock %}

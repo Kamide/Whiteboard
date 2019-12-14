@@ -23,14 +23,14 @@ form.inlined input {
     vertical-align: middle;
 }
 
-label, input {
+label, input, .output {
     color: inherit;
     font-size: inherit;
     line-height: inherit;
     box-sizing: border-box;
 }
 
-input {
+input, .output {
     padding: var(--thick) calc(2 * var(--thick));
     border: 0;
     outline: 0;
@@ -41,21 +41,24 @@ input:hover, input:focus {
     background-color: var(--input-bg-color-focus);
 }
 
-input[type=text], input[type=password] {
-    width: 20em;
-    max-width: 100%;
+input:not([type=checkbox]) {
     border: var(--thin) solid var(--header-bg-color);
     border-left-width: var(--thick);
     border-bottom-color: var(--header-outline-color);
 }
 
-input[type=text]:hover, input[type=password]:hover {
+input:not([type=checkbox]):hover {
     border-color: var(--header-outline-color);
     border-bottom-color: var(--text-color);
 }
 
-input[type=text]:focus, input[type=password]:focus {
+input:not([type=checkbox]):focus {
     border-color: var(--text-color-saturated);
+}
+
+input:not([type=checkbox]):not([type=date]):not([type=submit]) {
+    width: 20em;
+    max-width: 100%;
 }
 
 input[type=submit] {

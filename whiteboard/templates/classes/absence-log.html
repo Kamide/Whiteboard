@@ -2,20 +2,18 @@
 
 {% block title %}Absence Log - {{ super() }}{% endblock %}
 
-{% block absence_toggler %}
-    {{ nav_link(url_for('classes.class_info', class_id=current_class.id), 'Hide Absence Log') }}
-{% endblock %}
-
 {% block subcontent %}
     <section>
-        <header><h4>Absence Log</h4></header>
-        {% call action_links('h5', current_class.teacher == current_user.teacher) %}
-            {% block record_toggler %}
-                {{ nav_link(url_for('classes.record_absence', class_id=current_class.id), 'Enter Manual Mode') }}
-            {% endblock %}
-        {% endcall %}
+        <header>
+            <h3>Absence Log</h3>
+            {% call action_links(current_class.teacher == current_user.teacher) %}
+                {% block record_toggler %}
+                    {{ nav_link(url_for('classes.record_absence', class_id=current_class.id), 'Enter Manual Mode') }}
+                {% endblock %}
+            {% endcall %}
+        </header>
 
-        {% block abs_log_subcontent %}{% endblock %}
+        {% block log_content %}{% endblock %}
 
         {% if absences.count() > 0 %}
             {% set ns = namespace(prev_date=none) %}
@@ -26,7 +24,7 @@
                     </section>
                     {% endif %}
                     <section>
-                        <header><h5>{{ absence.date }}</h5></header>
+                        <header><h4>{{ absence.date }}</h4></header>
                         <ul class="user-list">
                             {# Closing tags above #}
                 {% endif %}

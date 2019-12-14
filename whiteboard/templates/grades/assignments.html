@@ -1,0 +1,72 @@
+{% extends 'class-info.html' %}
+
+{% block title %}Assignments - {{ super() }}{% endblock %}
+
+{% block style %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='assignments.css') }}">
+{% endblock %}
+
+{% block subcontent %}
+    <section>
+        <header>
+            <h3>Grading</h3>
+            {% call action_links(current_class.teacher == current_user.teacher) %}
+                {{ nav_link(url_for('grades.new_assignment_type', class_id=current_class.id), 'Add New Criteria', append_return_url=True) }}
+            {% endcall %}
+        </header>
+        {% if assignment_types.count() > 0 %}
+            <ul class="bulletless">
+                {% for assignment_type in assignment_types %}
+                    {% if current_class.teacher == current_user.teacher %}
+                        <li class="flexed card">
+                            <p>{{ assignment_type }}</p>
+                            <ul class="bulletless actions">
+                                {{ nav_link(url_for('grades.edit_assignment_type', class_id=current_class.id, at_id=assignment_type.id), 'Edit', append_return_url=True) }}
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li>{{ assignment_type }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="emphasized"><em>No criteria listed.</em></p>
+        {% endif %}
+    </section>
+
+    <section>
+        <header>
+            <h3>Assignments</h3>
+            {% call action_links(current_class.teacher == current_user.teacher) %}
+                {{ nav_link(url_for('grades.new_assignment', class_id=current_class.id), 'Add New Assignment', append_return_url=True) }}
+            {% endcall %}
+        </header>
+        {% if assignments.count() > 0 %}
+            <table id="assignments">
+                <tr>
+                    <th>Assignment</th>
+                    <th>Type</th>
+                    <th>Weight</th>
+                    <th>Due Date</th>
+                </tr>
+                {% for assignment in assignments %}
+                    <tr>
+                        <td>
+                            {% if current_class.teacher == current_user.teacher %}
+                                <a href="{{ url_for('grades.edit_assignment', class_id=current_class.id, a_id=assignment.id) }}?next={{ request.path }}">{{ assignment.name }}</a>
+                            {% else %}
+                                {{ assignment.name }}
+                            {% endif %}
+                        </td>
+                        <td>{{ assignment.assignmenttype.name }}</td>
+                        <td>{{ assignment.weight }}</td>
+                        <td>{{ assignment.due_date }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p class="emphasized"><em>No assignments posted.</em></p>
+        {% endif %}
+    </section>
+{% endblock %}

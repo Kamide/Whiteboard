@@ -1,6 +1,6 @@
 {% extends 'classes.html' %}
 
-{% from 'macros.html' import print_class_info, print_user with context %}
+{% from 'macros.html' import print_class_info, print_class_links, print_user with context %}
 
 {% block title %}{{ current_class }} - {{ super() }}{% endblock %}
 
@@ -11,28 +11,34 @@
 
 {% block content %}
     <section>
-        <header><h2>{{ current_class }}</h2></header>
-        {% call action_links('h3', current_class.teacher == current_user.teacher) %}
-            {{ nav_link(url_for('classes.edit_class', class_id=current_class.id), 'Edit') }}
-        {% endcall %}
-        {{ print_class_info(current_class) }}
+        <header>
+            <h2>{{ current_class }}</h2>
+            {{ print_class_links(current_class, False) }}
+        </header>
 
-        <section>
-            <header><h3>Students</h3></header>
-            {% block actions %}
-                {% call action_links('h4', current_class.has_user(current_user)) %}
-                    {% block enrollment_toggler %}
-                        {{ nav_link(url_for('classes.enrollment', class_id=current_class.id), 'Show Enrollment Panel', current_class.teacher == current_user.teacher) }}
-                    {% endblock %}
-
-                    {% block absence_toggler %}
-                        {# Do not show absence log to users not enrolled in or teaching the class. #}
-                        {{ nav_link(url_for('classes.absence_log', class_id=current_class.id), 'View Absence Log') }}
-                    {% endblock %}
+        <section class="card">
+            <header>
+                <h3>Class Information</h3>
+                {% call action_links(current_class.teacher == current_user.teacher) %}
+                    {{ nav_link(url_for('classes.edit_class', class_id=current_class.id), 'Edit', append_return_url=True) }}
                 {% endcall %}
-            {% endblock %}
+            </header>
+            {{ print_class_info(current_class) }}
+        </section>
 
-            {% block subcontent %}
+        {% block subcontent %}
+            <section>
+                <header>
+                    <h3>Students</h3>
+                    {% call action_links(current_class.has_user(current_user)) %}
+                        {% block enrollment_toggler %}
+                            {{ nav_link(url_for('classes.enrollment', class_id=current_class.id), 'Show Enrollment Panel', current_class.teacher == current_user.teacher) }}
+                        {% endblock %}
+                    {% endcall %}
+                </header>
+
+                {% block enrollment_content %}{% endblock %}
+
                 {% if students.count() > 0 %}
                     <ul class="user-list">
                         {% for student in students %}
@@ -61,7 +67,7 @@
                 {% else %}
                     <p class="emphasized"><em>No students enrolled.</em></p>
                 {% endif %}
-            {% endblock %}
-        </section>
+            </section>
+        {% endblock %}
     </section>
 {% endblock %}

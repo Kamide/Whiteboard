@@ -1,0 +1,60 @@
+{% extends 'edit-form.html' %}
+
+{% block style %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='grades.css') }}">
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/edit-assignment.js') }}"></script>
+{% endblock %}
+
+{% block body_attributes %}onload="initialize();"{% endblock %}
+
+{% block subcontent %}
+    <section class="card">
+        <header><h3>{{ card_title }}</h3></header>
+
+        {% if suggestions %}
+            <div class="emphasized">
+                <em>Suggestions<span class="hidden">:</span></em>
+                {% for suggestion in suggestions %}
+                    <button onclick="takeSuggestion({{ suggestion[0] }}, '{{ suggestion[1] }}')">{{ suggestion[1] }}</button>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {{ get_csrf_token() }}
+            <div>
+                {{ form.assignmenttype.label }}
+                {{ form.assignmenttype }}
+            </div>
+            <div>
+                {{ form.name.label }}
+                {{ form.name(id='assignmentName') }}
+            </div>
+            <div id="weight">
+                {{ form.weight_numerator.label }}
+                {{ form.weight_numerator(min=1, max=100, onchange='calculateWeight();') }}
+                {{ form.weight_denominator.label }}
+                {{ form.weight_denominator(min=1, max=100, onchange='calculateWeight();') }}
+                <div>
+                    <strong>Calculated Weight<span class="hidden">:</span></strong>
+                    <span id="weight_calculated" class="output">1.00</span>
+                </div>
+            </div>
+            <div>
+                {{ form.due_date.label }}
+                {{ form.due_date }}
+            </div>
+            <div>
+                {{ form.description.label }}
+                {{ form.description }}
+            </div>
+            <div>
+                {{ form.submit }}
+            </div>
+        </form>
+    </section>
+{% endblock %}

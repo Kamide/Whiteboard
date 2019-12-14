@@ -1,33 +1,39 @@
 {% extends 'layout.html' %}
 
-{% from 'macros.html' import action_links, print_class_info with context %}
+{% from 'macros.html' import action_links with context %}
 
 {% block title %}Academics - {{ super() }}{% endblock %}
 
 {% block content %}
-    <nav>
+    <section id="index">
         <header><h2>Index</h2></header>
-        <ul>
-            <li><a href="#departments">Departments</a></li>
-            <li><a href="#majors">Majors</a></li>
-            <li><a href="#majors">Courses</a></li>
-            <li><a href="#terms">{{ config.ACADEMIC_TERM.system_plural_capital }}</a></li>
-        </ul>
-    </nav>
+        <nav>
+            <ul>
+                <li><a href="#departments">Departments</a></li>
+                <li><a href="#majors">Majors</a></li>
+                <li><a href="#majors">Courses</a></li>
+                <li><a href="#terms">{{ config.ACADEMIC_TERM.system_plural_capital }}</a></li>
+            </ul>
+        </nav>
+    </section>
 
     <section id="departments">
-        <header><h2>Departments</h2></header>
-        {% call action_links('h3', current_user.is_teacher) %}
-            {{ nav_link(url_for('academics.new_department'), 'Add New Department') }}
-        {% endcall %}
+        <header>
+            <h2>Departments</h2>
+            {% call action_links(current_user.is_teacher) %}
+                {{ nav_link(url_for('academics.new_department'), 'Add New Department', append_return_url=True) }}
+            {% endcall %}
+        </header>
 
         {% if departments %}
             {% for department in departments %}
                 <section class="card">
-                    <header><h3>{{ department }}</header></h3>
-                    {% call action_links('h4', current_user.is_teacher) %}
-                        {{ nav_link(url_for('academics.edit_department', department_id=department.id), 'Edit') }}
-                    {% endcall %}
+                    <header>
+                        <h3>{{ department }}</h3>
+                        {% call action_links(current_user.is_teacher) %}
+                            {{ nav_link(url_for('academics.edit_department', department_id=department.id), 'Edit', append_return_url=True) }}
+                        {% endcall %}
+                    </header>
                     <p>Chair: <strong class="emphasized">{{ department.chair }}</strong></p>
                     <p>Office: <strong class="emphasized">{{ department.office }}</strong></p>
                 </section>
@@ -38,18 +44,22 @@
     </section>
 
     <section id="majors">
-        <header><h2>Majors</h2></header>
-        {% call action_links('h3', current_user.is_teacher) %}
-            {{ nav_link(url_for('academics.new_major'), 'Add New Major') }}
-        {% endcall %}
+        <header>
+            <h2>Majors</h2>
+            {% call action_links(current_user.is_teacher) %}
+                {{ nav_link(url_for('academics.new_major'), 'Add New Major', append_return_url=True) }}
+            {% endcall %}
+        </header>
 
         {% if majors %}
             {% for major in majors %}
                 <section class="card">
-                    <header><h3>{{ major }}</header></h3>
-                    {% call action_links('h4', current_user.is_teacher) %}
-                        {{ nav_link(url_for('academics.edit_major', major_id=major.id), 'Edit') }}
-                    {% endcall %}
+                    <header>
+                        <h3>{{ major }}</h3>
+                        {% call action_links(current_user.is_teacher) %}
+                            {{ nav_link(url_for('academics.edit_major', major_id=major.id), 'Edit', append_return_url=True) }}
+                        {% endcall %}
+                    </header>
                     {% if major.department %}
                         <p>Department: <strong class="emphasized">{{ major.department.name }}</strong></p>
                     {% endif %}
@@ -61,18 +71,22 @@
     </section>
 
     <section id="courses">
-        <header><h2>Courses</h2></header>
-        {% call action_links('h3', current_user.is_teacher) %}
-            {{ nav_link(url_for('academics.new_course'), 'Add New Course') }}
-        {% endcall %}
+        <header>
+            <h2>Courses</h2>
+            {% call action_links(current_user.is_teacher) %}
+                {{ nav_link(url_for('academics.new_course'), 'Add New Course', append_return_url=True) }}
+            {% endcall %}
+        </header>
 
         {% if courses %}
             {% for course in courses %}
                 <section class="card">
-                    <header><h3>{{ course }}</header></h3>
-                    {% call action_links('h4', current_user.is_teacher) %}
-                        {{ nav_link(url_for('academics.edit_course', course_id=course.id), 'Edit') }}
-                    {% endcall %}
+                    <header>
+                        <h3>{{ course }}</h3>
+                        {% call action_links(current_user.is_teacher) %}
+                            {{ nav_link(url_for('academics.edit_course', course_id=course.id), 'Edit', append_return_url=True) }}
+                        {% endcall %}
+                    </header>
                     <p>Name: <strong class="emphasized">{{ course.name }}</strong></p>
                 </section>
             {% endfor %}
@@ -82,18 +96,22 @@
     </section>
 
     <section id="terms">
-        <header><h2>{{ config.ACADEMIC_TERM.system_plural_capital }}</h2></header>
-        {% call action_links('h3', current_user.is_teacher) %}
-            {{ nav_link(url_for('academics.new_term'), 'Add New ' + config.ACADEMIC_TERM.system_capital) }}
-        {% endcall %}
+        <header>
+            <h2>{{ config.ACADEMIC_TERM.system_plural_capital }}</h2>
+            {% call action_links(current_user.is_teacher) %}
+                {{ nav_link(url_for('academics.new_term'), 'Add New ' + config.ACADEMIC_TERM.system_capital, append_return_url=True) }}
+            {% endcall %}
+        </header>
 
         {% if terms %}
             {% for term in terms %}
                 <section class="card">
-                    <header><h3>{{ term }}</header></h3>
-                    {% call action_links('h4', current_user.is_teacher) %}
-                        {{ nav_link(url_for('academics.edit_term', term_id=term.id), 'Edit') }}
-                    {% endcall %}
+                    <header>
+                        <h3>{{ term }}</h3>
+                        {% call action_links(current_user.is_teacher) %}
+                            {{ nav_link(url_for('academics.edit_term', term_id=term.id), 'Edit', append_return_url=True) }}
+                        {% endcall %}
+                    </header>
                     <p>Start Date: <strong class="emphasized">{{ term.start_date }}</strong></p>
                     <p>End Date: <strong class="emphasized">{{ term.end_date }}</strong></p>
                 </section>

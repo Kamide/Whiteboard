@@ -12,7 +12,7 @@
     <section id="board">
         <header><h2>{{ status }}</h2></header>
         <p>{{ description }}</p>
-        {% call action_links('h3', class='actions') %}
+        {% call action_links() %}
             {{ get_return_link() }}
         {% endcall %}
     </section>

@@ -1,3 +1,5 @@
+/* Variables */
+
 :root {
     --thin: 0.0625rem;
     --medium: 0.125rem;
@@ -13,12 +15,16 @@
     --header-outline-color: hsl(168, 25%, 60%);
     --card-bg-color: rgba(255, 255, 255, 0.5);
     --card-outline-color: rgba(0, 0, 0, 0.1);
+    --tooltip-color: hsl(58, 100%, 50%);
+    --tooltip-bg-color: hsla(238, 50%, 25%);
 
     --anchor-color: hsl(282, 50%, 50%);
     --highlight-color: hsl(192, 50%, 50%);
     --success-color: hsl(108, 50%, 30%);
     --error-color: hsl(342, 100%, 42%);
 }
+
+/* General */
 
 html, body, h2, h3, h4, h5, h6, p, ul, header.masthead *, .messages.masthead ul {
     margin: 0;
@@ -72,6 +78,8 @@ a:hover {
     text-decoration: underline;
 }
 
+/* Navigation Bar */
+
 header.masthead, main {
     margin-bottom: var(--margin-major);
 }
@@ -82,20 +90,20 @@ header.masthead {
     border-top:var(--thin) solid transparent;
 }
 
-nav.masthead h1 {
+header.masthead h1 {
     font-size: inherit;
 }
 
-nav.masthead li, nav.masthead a, nav.masthead a.active-page::after {
+div.masthead a, div.masthead a.active-page::after, nav.masthead li {
     display: block;
 }
 
-nav.masthead a {
+div.masthead a {
     position: relative;
     padding: var(--margin-minor);
 }
 
-nav.masthead a.active-page::after {
+div.masthead a.active-page::after {
     content: '';
     position: absolute;
     width: calc(var(--margin-minor) / 2);
@@ -106,6 +114,8 @@ nav.masthead a.active-page::after {
     outline: var(--thin) solid var(--header-outline-color);
 }
 
+/* Messages */
+
 .messages .success {
     color: var(--success-color);
 }
@@ -114,7 +124,7 @@ nav.masthead a.active-page::after {
     color: var(--error-color);
 }
 
-.messages.masthead header, .actions header {
+.messages.masthead header, .hidden {
     display: none;
 }
 
@@ -136,6 +146,8 @@ nav.masthead a.active-page::after {
     font-weight: bold;
 }
 
+/* Content */
+
 main, .card {
     padding: 0 var(--margin-minor);
     box-sizing: border-box;
@@ -143,22 +155,23 @@ main, .card {
 
 main section {
     position: relative;
-    margin-top: var(--margin-major);
+    margin: var(--margin-major) 0;
 }
 
 footer {
     color: var(--text-color-subdued);
 }
 
-.card, .actions li, #tweets li, .interact a, button {
+.card, .actions a, #tweets li, .interact a, button {
     border: var(--thin) solid var(--card-outline-color);
     border-radius: var(--thick);
     background-color: var(--card-bg-color);
     box-shadow: 0 var(--thin) var(--thin) var(--card-outline-color);
 }
 
-.actions ul {
+.actions ul, .bulletless {
     margin-left: 0;
+    list-style: none;
 }
 
 .actions li, .actions a, .interact a, button {
@@ -170,8 +183,13 @@ footer {
     padding: calc(var(--margin-minor) / 4) calc(var(--margin-minor) / 2);
 }
 
-.actions li:hover, .interact a:hover, button:hover:not(:disabled), button:active:not(:disabled) {
+.actions a:hover, .interact a:hover, button:hover:not(:disabled), button:active:not(:disabled) {
     border-color: var(--highlight-color);
+}
+
+.actions a.active-page {
+    color: var(--highlight-color);
+    box-shadow: 0 0 var(--thick) var(--highlight-color);
 }
 
 button {
@@ -180,12 +198,17 @@ button {
     line-height: inherit;
 }
 
+button:hover, button:active {
+    color: var(--highlight-color);
+}
+
 button:active {
-    background-color: var(--main-bg-color);
+    background-color: var(--card-outline-color);
 }
 
 button:disabled {
-    background-color: var(--card-outline-color);
+    color: var(--card-outline-color);
+    background-color: var(--main-bg-color);
 }
 
 .emphasized {
@@ -202,17 +225,17 @@ button:disabled {
 }
 
 @media only screen and (min-width: 800px) {
-    nav.masthead, .messages.masthead ul, main {
+    div.masthead, .messages.masthead ul, main {
         max-width: 800px;
         margin-left: auto;
         margin-right: auto;
     }
 
-    nav.masthead, nav.masthead ul {
+    div.masthead, nav.masthead ul {
         display: flex;
     }
 
-    nav.masthead a.active-page::after {
+    div.masthead a.active-page::after {
         width: 50%;
         height: var(--thick);
         bottom: 0;
@@ -220,18 +243,15 @@ button:disabled {
         background: linear-gradient(to right, var(--anchor-color) 25%, var(--main-bg-color) 25%);
     }
 
-    .actions ul {
+    main header, .flexed {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: var(--margin-minor) 0;
+    }
+
+    main header *, .actions ul {
         margin: 0;
-    }
-
-    .card .actions ul {
-        margin: var(--margin-minor);
-    }
-
-    .float-top-right {
-        position: absolute;
-        top: 0;
-        right: 0;
     }
 }
 

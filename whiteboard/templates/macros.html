@@ -1,14 +1,20 @@
-{% macro nav_link(destination, caption, print_condition=True, title='') %}
+{% macro nav_link(destination, caption, print_condition=True, append_return_url=False, title='') %}
     {% if print_condition %}
         <li>
-            {% set destination_is_endpoint = '/' not in destination  %}
-            <a {% if destination_is_endpoint and destination == request.endpoint %}
+            {% set destination_is_endpoint = '/' not in destination and '#' not in destination %}
+            {% if append_return_url %}
+                {% set return_url = '?next=' + request.path %}
+            {% else %}
+                {% set return_url = '' %}
+            {% endif %}
+            <a {% if (destination_is_endpoint and destination == request.endpoint) or
+                     (not destination_is_endpoint and destination == request.path) %}
                 class="active-page"
             {% endif %}
             {% if destination_is_endpoint %}
-                href="{{ url_for(destination) }}"
+                href="{{ url_for(destination) + return_url }}"
             {% else %}
-                href="{{ destination }}"
+                href="{{ destination + return_url }}"
             {% endif %}
             {% if title %}
                 title="{{ title }}"
@@ -18,23 +24,20 @@
     {% endif %}
 {% endmacro %}
 
-{% macro action_links(heading_level, print_condition=True, class='actions float-top-right', header='Actions', use_list=True) %}
+{% macro action_links(print_condition=True, class='actions') %}
     {% if print_condition %}
         <nav {% if class %}class="{{ class }}"{% endif %}>
-            <header><{{ heading_level }}>{{ header }}</{{ heading_level }}></header>
-            {% if use_list %}
-                <ul>
-                    {{ caller() }}
-                </ul>
-            {% else %}
+            <ul>
                 {{ caller() }}
-            {% endif %}
+            </ul>
         </nav>
     {% endif %}
 {% endmacro %}
 
 {% macro get_return_link() %}
-    {% if request.referrer and request.referrer != request.url %}
+    {% if request.args.get('next') %}
+        <li><a href="{{ request.args.get('next') }}">Return to Previous Page</a></li>
+    {% elif request.referrer and request.referrer != request.url %}
         {{ nav_link(request.referrer, 'Return to Previous Page') }}
     {% else %}
         {{ nav_link(url_for('root.index'), 'Return to Home Page') }}
@@ -46,7 +49,7 @@
 {% endmacro %}
 
 {% macro print_form(form, method, action='', class='') %}
-    <form {% if class %}class="{{ class }}"{% endif %} action="{{ action }}" method="{{ method }}">
+    <form {% if class %}class="{{ class }}"{% endif %} {% if action %}action="{{ action }}"{% endif %} method="{{ method }}">
         {{ form.csrf_token }}
         {% for field in form %}
             {% if field.type != 'CSRFTokenField' %}
@@ -92,13 +95,10 @@
                 {{ user }}
             {% endif %}
         </{{ heading_level }}>
-    </header>
-
-    {% if user == current_user %}
-        {% call action_links('h4') %}
-            {{ nav_link(url_for('auth.edit_profile'), 'Edit') }}
+        {% call action_links(user == current_user) %}
+            {{ nav_link(url_for('auth.edit_profile'), 'Edit', append_return_url=True) }}
         {% endcall %}
-    {% endif %}
+    </header>
 
     <p>Email: <strong class="emphasized">{{ user.email }}</strong></p>
     <p>Join Date: <strong class="emphasized">{{ user.join_date }}</strong></p>
@@ -110,6 +110,19 @@
     {% else %}
         <p>Major: <strong class="emphasized">{{ user.student.major or 'Undeclared' }}</strong></p>
     {% endif %}
+{% endmacro %}
+
+{% macro print_class_links(class, print_edit_link=True) %}
+    {% call action_links() %}
+        {{ nav_link(url_for('classes.class_info', class_id=class.id), 'Students') }}
+        {% if class.has_user(current_user) %}
+            {{ nav_link(url_for('classes.absence_log', class_id=class.id), 'Absence Log') }}
+            {{ nav_link(url_for('grades.assignments', class_id=class.id), 'Assignments') }}
+        {% endif %}
+        {% if print_edit_link %}
+            {{ nav_link(url_for('classes.edit_class', class_id=class.id), 'Edit', class.teacher == current_user.teacher, True) }}
+        {% endif %}
+    {% endcall %}
 {% endmacro %}
 
 {% macro print_class_info(class) %}
@@ -129,12 +142,10 @@
     {% endif %}
 
     <section class="{% if section_style %}{{ section_style }} {% endif %}card">
-        <header><h3><a href="{{ url_for('classes.class_info', class_id=class.id) }}">{{ class }}</a></header></h3>
-        {% call action_links('h4', actions_print_condition) %}
-            {{ nav_link(url_for('classes.edit_class', class_id=class.id), 'Edit', class.teacher == current_user.teacher) }}
-            {{ nav_link(url_for('classes.absence_log', class_id=class.id), 'View Absence Log') }}
-        {% endcall %}
-
+        <header>
+            <h3><a href="{{ url_for('classes.class_info', class_id=class.id) }}">{{ class }}</a></h3>
+            {{ print_class_links(class) }}
+        </header>
         {{ print_class_info(class) }}
     </section>
 {% endmacro %}
