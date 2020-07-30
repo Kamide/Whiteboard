@@ -2,6 +2,9 @@
 
 **Whiteboard** is a web-based gradebook and attendance tracker for teachers and students.
 
+![Screenshot - Academics](./screenshots/academics.png)
+![Screenshot - Classes](./screenshots/classes.png)
+
 ## Prerequisites
 
 - Python >= 3.6
