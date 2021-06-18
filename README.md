@@ -3,7 +3,9 @@
 **Whiteboard** is a web-based gradebook and attendance tracker for teachers and students.
 
 ![Screenshot - Academics](./screenshots/academics.png)
-![Screenshot - Classes](./screenshots/classes.png)
+<span style="vertical-align: top;">![Screenshot - Classes](./screenshots/classes.png)</span>
+
+![Screenshot - Assignment](./screenshots/assignment.png)
 
 ## Prerequisites
 
